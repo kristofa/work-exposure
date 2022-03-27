@@ -1,0 +1,61 @@
+{
+  "expand": "schema,names",
+  "startAt": 2,
+  "maxResults": 2,
+  "total": 3,
+  "issues": [
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "147318",
+      "self": "https://jira.com/rest/api/2/issue/147318",
+      "key": "PROJECTKEY-458",
+      "fields": {
+        "issuetype": {
+          "self": "https://jira.com/rest/api/2/issuetype/1",
+          "id": "2",
+          "description": "A user story",
+          "iconUrl": "https://jira.com/secure/viewavatar?size=xsmall&avatarId=10703&avatarType=issuetype",
+          "name": "Story",
+          "subtask": false,
+          "avatarId": 10703
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "1567613",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=john.doe",
+              "name": "john.doe",
+              "key": "JIRAUSER16374",
+              "emailAddress": "john.doe@jira.com",
+              "avatarUrls": {
+                "48x48": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=48",
+                "24x24": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=24",
+                "16x16": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=16",
+                "32x32": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=32"
+              },
+              "displayName": "John Doe",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-12T11:31:39.000+0200",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "from": "1",
+                "fromString": "Open",
+                "to": "3",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}

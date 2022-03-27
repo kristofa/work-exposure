@@ -1,0 +1,279 @@
+{
+  "expand": "schema,names",
+  "startAt": 0,
+  "maxResults": 3,
+  "total": 3,
+  "issues": [
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "147320",
+      "self": "https://jira.com/rest/api/2/issue/147320",
+      "key": "PROJECTKEY-459",
+      "fields": {
+        "issuetype": {
+          "self": "https://jira.com/rest/api/2/issuetype/1",
+          "id": "1",
+          "description": "A problem which impairs or prevents the functions of the product.",
+          "iconUrl": "https://jira.com/secure/viewavatar?size=xsmall&avatarId=10703&avatarType=issuetype",
+          "name": "Bug",
+          "subtask": false,
+          "avatarId": 10703
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "1567651",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=john.doe",
+              "name": "john.doe",
+              "key": "JIRAUSER16374",
+              "emailAddress": "john.doe@jira.com",
+              "avatarUrls": {
+                "48x48": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=48",
+                "24x24": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=24",
+                "16x16": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=16",
+                "32x32": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=32"
+              },
+              "displayName": "John Doe",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-12T11:44:12.000+0200",
+            "items": [
+              {
+                "field": "description",
+                "fieldtype": "jira",
+                "from": null,
+                "fromString": "from description",
+                "to": null,
+                "toString": "to description"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "147278",
+      "self": "https://jira.com/rest/api/2/issue/147278",
+      "key": "PROJECTKEY-456",
+      "fields": {
+        "issuetype": {
+          "self": "https://jira.com/rest/api/2/issuetype/1",
+          "id": "2",
+          "description": "A user story",
+          "iconUrl": "https://jira.com/secure/viewavatar?size=xsmall&avatarId=10703&avatarType=issuetype",
+          "name": "Story",
+          "subtask": false,
+          "avatarId": 10703
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 4,
+        "total": 4,
+        "histories": [
+          {
+            "id": "1562403",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=homer.simpson",
+              "name": "homer.simpson",
+              "key": "homer.simpson",
+              "emailAddress": "homer.simpson@jira.com",
+              "displayName": "Homer Simpson",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-05T11:16:17.000+0200",
+            "items": [
+              {
+                "field": "Sprint",
+                "fieldtype": "custom",
+                "from": "424",
+                "fromString": "Bugs",
+                "to": "1185",
+                "toString": "Engie 17"
+              }
+            ]
+          },	
+          {
+            "id": "1567028",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=marge.simpson",
+              "name": "marge.simpson",
+              "key": "marge.simpson",
+              "emailAddress": "marge.simpson@jira.com",
+              "avatarUrls": {
+                "48x48": "https://avatars.com/48",
+                "24x24": "https://avatars.com/24",
+                "16x16": "https://avatars.com/16",
+                "32x32": "https://avatars.com/32"
+              },
+              "displayName": "Marge Simpson",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-11T14:07:51.000+0200",
+            "items": [
+              {
+                "field": "assignee",
+                "fieldtype": "jira",
+                "from": null,
+                "fromString": null,
+                "to": "marge.simpson",
+                "toString": "Marge Simpson"
+              },
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "from": "1",
+                "fromString": "Open",
+                "to": "3",
+                "toString": "In Progress"
+              }
+            ]
+          },
+          {
+            "id": "1567037",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=gitlab",
+              "name": "gitlab",
+              "key": "JIRAUSER16314",
+              "emailAddress": "gitlab@jira.com",
+              "avatarUrls": {
+                "48x48": "https://www.gravatar.com/avatar/aca6b6b1e79b2558a90635b8bff03bfc?d=mm&s=48",
+                "24x24": "https://www.gravatar.com/avatar/aca6b6b1e79b2558a90635b8bff03bfc?d=mm&s=24",
+                "16x16": "https://www.gravatar.com/avatar/aca6b6b1e79b2558a90635b8bff03bfc?d=mm&s=16",
+                "32x32": "https://www.gravatar.com/avatar/aca6b6b1e79b2558a90635b8bff03bfc?d=mm&s=32"
+              },
+              "displayName": "Gitlab",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-11T14:20:42.000+0200",
+            "items": [
+              {
+                "field": "RemoteIssueLink",
+                "fieldtype": "jira",
+                "from": null,
+                "fromString": null,
+                "to": "32711",
+                "toString": "This issue links to \"Merge request - Make dialog to skip mandates step not dismissable (Web Link)\""
+              }
+            ]
+          },
+          {
+            "id": "1567038",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=marge.simpson",
+              "name": "marge.simpson",
+              "key": "marge.simpson",
+              "emailAddress": "marge.simpson@jira.com",
+              "avatarUrls": {
+                "48x48": "https://avatars.com/48",
+                "24x24": "https://avatars.com/24",
+                "16x16": "https://avatars.com/16",
+                "32x32": "https://avatars.com/32"
+              },
+              "displayName": "Marge Simpson",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-11T14:20:45.000+0200",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "from": "3",
+                "fromString": "In Progress",
+                "to": "10406",
+                "toString": "In Review"
+              }
+            ]
+          },
+          {
+        	"id": "1563506",
+        	"author": {
+          		"self": "https://jira.com/rest/api/2/user?username=homer.simpson",
+          		"name": "homer.simpson",
+          		"key": "homer.simpson",
+          		"emailAddress": "homer.simpson@jira.com",
+          		"displayName": "Homer Simpson",
+          		"active": true,
+          		"timeZone": "Europe/Brussels"
+          	},
+        	"created": "2021-05-06T11:03:50.000+0200",
+        	"items": [
+          		{
+            		"field": "Flagged",
+            		"fieldtype": "custom",
+            		"from": null,
+            		"fromString": null,
+            		"to": "[10500]",
+            		"toString": "Impediment"
+          		}
+        	]
+          }	
+        ]
+      }
+    },
+    {
+      "expand": "operations,versionedRepresentations,editmeta,changelog,renderedFields",
+      "id": "147318",
+      "self": "https://jira.com/rest/api/2/issue/147318",
+      "key": "PROJECTKEY-458",
+      "fields": {
+        "issuetype": {
+          "self": "https://jira.com/rest/api/2/issuetype/1",
+          "id": "2",
+          "description": "A user story",
+          "iconUrl": "https://jira.com/secure/viewavatar?size=xsmall&avatarId=10703&avatarType=issuetype",
+          "name": "Story",
+          "subtask": false,
+          "avatarId": 10703
+        }
+      },
+      "changelog": {
+        "startAt": 0,
+        "maxResults": 1,
+        "total": 1,
+        "histories": [
+          {
+            "id": "1567613",
+            "author": {
+              "self": "https://jira.com/rest/api/2/user?username=john.doe",
+              "name": "john.doe",
+              "key": "JIRAUSER16374",
+              "emailAddress": "john.doe@jira.com",
+              "avatarUrls": {
+                "48x48": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=48",
+                "24x24": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=24",
+                "16x16": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=16",
+                "32x32": "https://www.gravatar.com/avatar/38b9ff390578a5830ed1cdf8fcaba37f?d=mm&s=32"
+              },
+              "displayName": "John Doe",
+              "active": true,
+              "timeZone": "Europe/Brussels"
+            },
+            "created": "2021-05-12T11:31:39.000+0200",
+            "items": [
+              {
+                "field": "status",
+                "fieldtype": "jira",
+                "from": "1",
+                "fromString": "Open",
+                "to": "3",
+                "toString": "In Progress"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
