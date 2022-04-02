@@ -1,3 +1,4 @@
+from datetime import datetime
 from value_stream_mapping.jira import jira_api
 import unittest
 import responses
@@ -26,7 +27,7 @@ class TestJiraApi(unittest.TestCase):
 
                 api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
                 issues = api.getIssuesFor(projectKey="PROJECTKEY")
-                self._verifyReturnedIssues(issues)
+                self._verify_getIssuesFor_response(issues)
 
 
     """
@@ -50,10 +51,10 @@ class TestJiraApi(unittest.TestCase):
 
                     api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd', maxResultsPerRequest=2)
                     issues = api.getIssuesFor(projectKey="PROJECTKEY")
-                    self._verifyReturnedIssues(issues)
+                    self._verify_getIssuesFor_response(issues)
         
 
-    def _verifyReturnedIssues(self, issues):
+    def _verify_getIssuesFor_response(self, issues):
         self.assertEqual(len(issues), 3)
                 
         firstIssue = issues[0]
@@ -92,7 +93,49 @@ class TestJiraApi(unittest.TestCase):
         self.assertEqual(thirdIssueFirstChange.fromStatus, 'Open')
         self.assertEqual(thirdIssueFirstChange.toStatus, 'In Progress')
 
-        
+
+    """
+    Tests retrieving worklog ids that have been updated since a given datetime.
+    """
+    def test_getUpdatedWorklogsSince_singleCall(self):
+        since = datetime.fromisoformat('2022-01-01')
+        sinceUnixTimeStampMs = int(since.timestamp() * 1000)
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_updated_worklog_ids_single_response.json')) as file:
+            with responses.RequestsMock() as rsps:
+                rsps.add(
+                    method=responses.GET,
+                    url='https://jira.com/rest/api/3/worklog/updated?since=' + str(sinceUnixTimeStampMs),
+                    json=json.load(file),
+                    status=200)
+
+                api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                workLogIds = api.getUpdatedWorklogsSince(since=since)
+                self.assertEqual(workLogIds, [40029, 40030, 40031, 40032, 40744])
     
+    """
+    Tests retrieving worklog ids that have been updated since a given datetime but when
+    not all worklogs fit in the first request.
+    """
+    def test_getUpdatedWorklogsSince_multipleCalls(self):
+        since = datetime.fromisoformat('2022-01-01')
+        sinceUnixTimeStampMs = int(since.timestamp() * 1000)
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_updated_worklog_ids_multiple_responses_part1.json')) as file1:
+            with open(os.path.join(self.directoryCurrentFile, 'jira_get_updated_worklog_ids_multiple_responses_part2.json')) as file2:
+                with responses.RequestsMock() as rsps:
+                    rsps.add(
+                        method=responses.GET,
+                        url='https://jira.com/rest/api/3/worklog/updated?since=' + str(sinceUnixTimeStampMs),
+                        json=json.load(file1),
+                        status=200)
+                    rsps.add(
+                        method=responses.GET,
+                        url='https://jira.com/rest/api/3/worklog/updated?since=1641214457686',
+                        json=json.load(file2),
+                        status=200)
+
+                    api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                    workLogIds = api.getUpdatedWorklogsSince(since=since)
+                    self.assertEqual(workLogIds, [40029, 40030, 40031, 40032, 40744])
+
 if __name__ == '__main__':
     unittest.main()

@@ -20,6 +20,7 @@ class JiraIssue:
     def addChange(self, change: JiraIssueChange):
         self.changes.append(change)
 
+
 class JiraApi:
 
     def __init__(self, baseUrl, user, password, maxResultsPerRequest=25):
@@ -28,6 +29,30 @@ class JiraApi:
         self.password = password
         self.maxResultsPerRequest = maxResultsPerRequest
 
+
+    def getUpdatedWorklogsSince(self, since: datetime) -> List[int]:
+        isLastPage = False
+        # sinceMs = unit timestamp ms
+        sinceUnixTimestampMs = int(since.timestamp() * 1000)
+        workLogIds = []
+        while isLastPage == False:
+            jsonResponse = self._getUpdatedWorklogsSince(sinceUnixTimestampMs)
+            sinceUnixTimestampMs = jsonResponse["until"] + 1
+            isLastPage = jsonResponse["lastPage"]
+            for worklogItem in jsonResponse["values"]:
+                workLogIds.append(worklogItem["worklogId"])
+
+        return workLogIds
+
+    def _getUpdatedWorklogsSince(self, sinceUnixTimeStampMs: float):
+        requestUrl = self.baseUrl + 'rest/api/3/worklog/updated'
+        defaultHeaders = {'Content-Type':'application/json'}
+        queryParams = {'since':sinceUnixTimeStampMs}
+        timeoutSeconds = 10
+
+        response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
+        response.raise_for_status
+        return response.json()
 
     def getIssuesFor(self, projectKey: str) -> List[JiraIssue]:
         

@@ -1,0 +1,21 @@
+{
+    "values":
+    [
+        {
+            "worklogId": 40032,
+            "updatedTime": 1641223813596,
+            "properties":
+            []
+        },
+        {
+            "worklogId": 40744,
+            "updatedTime": 1648658334959,
+            "properties":
+            []
+        }
+    ],
+    "since": 1641214457686,
+    "until": 1648658334959,
+    "self": "https://domain.atlassian.net/rest/api/3/worklog/updated?since=1641214457686",
+    "lastPage": true
+}
