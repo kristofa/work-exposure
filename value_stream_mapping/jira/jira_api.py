@@ -1,7 +1,10 @@
+from concurrent.futures.process import _WorkItem
 from datetime import datetime
 import requests
 from typing import List
 from dateutil.parser import parse
+import json
+from itertools import islice
 
 class JiraIssueChange:
     def __init__(self, date: datetime, fromStatus: str, toStatus: str):
@@ -20,6 +23,13 @@ class JiraIssue:
     def addChange(self, change: JiraIssueChange):
         self.changes.append(change)
 
+class JiraWorklogItem:
+    def __init__(self, issueId: str, author: str, date: datetime, timeSpentSeconds: int):
+        self.issueId = issueId
+        self.author = author
+        self.date = date
+        self.timeSpentSeconds = timeSpentSeconds
+
 
 class JiraApi:
 
@@ -30,9 +40,9 @@ class JiraApi:
         self.maxResultsPerRequest = maxResultsPerRequest
 
 
-    def getUpdatedWorklogsSince(self, since: datetime) -> List[int]:
+    def getUpdatedWorklogIdsSince(self, since: datetime) -> List[int]:
+        # First get the worklog id's
         isLastPage = False
-        # sinceMs = unit timestamp ms
         sinceUnixTimestampMs = int(since.timestamp() * 1000)
         workLogIds = []
         while isLastPage == False:
@@ -41,8 +51,36 @@ class JiraApi:
             isLastPage = jsonResponse["lastPage"]
             for worklogItem in jsonResponse["values"]:
                 workLogIds.append(worklogItem["worklogId"])
-
         return workLogIds
+
+    def getWorkLogItems(self, worklogItemIds: List[int], maxNrWorklogItemsInSingleRequest = 100) -> List[JiraWorklogItem]:
+        nrOfWorkLogItems = len(worklogItemIds)
+        nrOfIterations = int(nrOfWorkLogItems / maxNrWorklogItemsInSingleRequest)
+        if ((nrOfWorkLogItems % maxNrWorklogItemsInSingleRequest) > 0):
+            nrOfIterations += 1
+
+        workLogItems = []
+        for i in range(0, nrOfIterations):
+            fromIndex = i * maxNrWorklogItemsInSingleRequest
+            toIndex = (fromIndex + maxNrWorklogItemsInSingleRequest - 1)
+            if (fromIndex + maxNrWorklogItemsInSingleRequest - 1 > nrOfWorkLogItems):
+                toIndex = nrOfWorkLogItems
+
+            workLogItemsForRequest = list(islice(worklogItemIds, fromIndex, toIndex))
+            jsonResponse = self._getWorklogs(workLogItemsForRequest)
+            for worklogItem in jsonResponse:
+                authorJsonObject = worklogItem["author"]
+                author = authorJsonObject["displayName"]
+
+                issueId = worklogItem["issueId"]
+                date = parse(worklogItem["started"])
+                timeSpentSeconds = worklogItem["timeSpentSeconds"]
+
+                worklogItem = JiraWorklogItem(issueId, author, date, timeSpentSeconds)
+                workLogItems.append(worklogItem)
+
+        return workLogItems
+
 
     def _getUpdatedWorklogsSince(self, sinceUnixTimeStampMs: float):
         requestUrl = self.baseUrl + 'rest/api/3/worklog/updated'
@@ -53,6 +91,17 @@ class JiraApi:
         response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
         response.raise_for_status
         return response.json()
+
+    def _getWorklogs(self, worklogIds: List[int]):
+        requestUrl = self.baseUrl + 'rest/api/3/worklog/list'
+        defaultHeaders = {'Content-Type':'application/json'}
+        timeoutSeconds = 10
+        requestBody = { "ids": worklogIds }
+
+        response = requests.post(requestUrl, headers=defaultHeaders, auth=(self.user, self.password), data=json.dumps(requestBody), timeout=timeoutSeconds)
+        response.raise_for_status
+        return response.json()
+
 
     def getIssuesFor(self, projectKey: str) -> List[JiraIssue]:
         

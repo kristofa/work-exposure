@@ -6,6 +6,7 @@ import json
 import os
 import sys
 from dateutil.parser import parse
+from responses import matchers
 
 class TestJiraApi(unittest.TestCase):
 
@@ -97,7 +98,7 @@ class TestJiraApi(unittest.TestCase):
     """
     Tests retrieving worklog ids that have been updated since a given datetime.
     """
-    def test_getUpdatedWorklogsSince_singleCall(self):
+    def test_getUpdatedWorklogIdsSince_singleCall(self):
         since = datetime.fromisoformat('2022-01-01')
         sinceUnixTimeStampMs = int(since.timestamp() * 1000)
         with open(os.path.join(self.directoryCurrentFile, 'jira_get_updated_worklog_ids_single_response.json')) as file:
@@ -109,14 +110,14 @@ class TestJiraApi(unittest.TestCase):
                     status=200)
 
                 api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                workLogIds = api.getUpdatedWorklogsSince(since=since)
+                workLogIds = api.getUpdatedWorklogIdsSince(since=since)
                 self.assertEqual(workLogIds, [40029, 40030, 40031, 40032, 40744])
     
     """
     Tests retrieving worklog ids that have been updated since a given datetime but when
     not all worklogs fit in the first request.
     """
-    def test_getUpdatedWorklogsSince_multipleCalls(self):
+    def test_getUpdatedWorklogIdsSince_multipleCalls(self):
         since = datetime.fromisoformat('2022-01-01')
         sinceUnixTimeStampMs = int(since.timestamp() * 1000)
         with open(os.path.join(self.directoryCurrentFile, 'jira_get_updated_worklog_ids_multiple_responses_part1.json')) as file1:
@@ -134,8 +135,27 @@ class TestJiraApi(unittest.TestCase):
                         status=200)
 
                     api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                    workLogIds = api.getUpdatedWorklogsSince(since=since)
+                    workLogIds = api.getUpdatedWorklogIdsSince(since=since)
                     self.assertEqual(workLogIds, [40029, 40030, 40031, 40032, 40744])
+
+    """
+    Tests retrieving worklog items based on worklog item ids.
+    """
+    def test_getWorkLogItems_singleCall(self):
+        worklogItemIds = [1, 2, 3]
+
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_single_response.json')) as file:
+            with responses.RequestsMock() as rsps:
+                rsps.add(
+                    method=responses.POST,
+                    url='https://jira.com/rest/api/3/worklog/list',
+                    match=[matchers.json_params_matcher({"ids": [40031, 40032, 40744]})],
+                    json=json.load(file),
+                    status=200)
+
+                api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                workLogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744])
+                self.assertEqual(len(workLogItems), 3)
 
 if __name__ == '__main__':
     unittest.main()
