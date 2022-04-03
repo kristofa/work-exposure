@@ -1,0 +1,13 @@
+{
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "40054",
+    "self": "https://company.atlassian.net/rest/api/3/issue/40054",
+    "key": "CP-6384",
+    "fields":
+    {
+        "labels":
+        [
+            "ANALYSES", "2ndlabel"
+        ]
+    }
+}

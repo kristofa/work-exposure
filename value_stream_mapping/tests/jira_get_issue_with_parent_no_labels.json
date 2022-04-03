@@ -1,0 +1,54 @@
+{
+    "expand": "renderedFields,names,schema,operations,editmeta,changelog,versionedRepresentations",
+    "id": "40576",
+    "self": "https://company.atlassian.net/rest/api/3/issue/40576",
+    "key": "CP-6615",
+    "fields":
+    {
+        "parent":
+        {
+            "id": "40266",
+            "key": "CP-6495",
+            "self": "https://company.atlassian.net/rest/api/3/issue/40266",
+            "fields":
+            {
+                "summary": "Pilot developments",
+                "status":
+                {
+                    "self": "https://company.atlassian.net/rest/api/3/status/10100",
+                    "description": "",
+                    "iconUrl": "https://company.atlassian.net/",
+                    "name": "Backlog",
+                    "id": "10100",
+                    "statusCategory":
+                    {
+                        "self": "https://company.atlassian.net/rest/api/3/statuscategory/2",
+                        "id": 2,
+                        "key": "new",
+                        "colorName": "blue-gray",
+                        "name": "To Do"
+                    }
+                },
+                "priority":
+                {
+                    "self": "https://company.atlassian.net/rest/api/3/priority/3",
+                    "iconUrl": "https://company.atlassian.net/images/icons/priorities/medium.svg",
+                    "name": "Medium",
+                    "id": "3"
+                },
+                "issuetype":
+                {
+                    "self": "https://company.atlassian.net/rest/api/3/issuetype/10000",
+                    "id": "10000",
+                    "description": "A big user story that needs to be broken down. Created by JIRA Software - do not edit or delete.",
+                    "iconUrl": "https://company.atlassian.net/images/icons/issuetypes/epic.png",
+                    "name": "Epic",
+                    "subtask": false,
+                    "hierarchyLevel": 1
+                }
+            }
+        },
+        "labels":
+        []
+    }
+}

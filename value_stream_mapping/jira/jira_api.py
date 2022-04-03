@@ -6,22 +6,22 @@ from dateutil.parser import parse
 import json
 from itertools import islice
 
-class JiraIssueChange:
-    def __init__(self, date: datetime, fromStatus: str, toStatus: str):
-        self.date = date
-        self.fromStatus = fromStatus
-        self.toStatus = toStatus
 
 class JiraIssue:
-    def __init__(self, issueKey, issueType):
+    def __init__(self, issueId, issueKey):
+        self.issueId = issueId
         self.issueKey = issueKey
-        self.issueType = issueType
-        self.hasBeenBlocked = False
-        self.hasBeenPartOfSprint = False
-        self.changes = []
+        self.epic = None
+        self.labels = []
 
-    def addChange(self, change: JiraIssueChange):
-        self.changes.append(change)
+    def addLabel(self, labelValue: str):
+        self.labels.append(labelValue)
+
+class JiraEpic:
+    def __init__(self, key, description):
+        self.key = key
+        self.description = description
+
 
 class JiraWorklogItem:
     def __init__(self, issueId: str, author: str, date: datetime, timeSpentSeconds: int):
@@ -77,6 +77,33 @@ class JiraApi:
                 workLogItems.append(worklogItem)
 
         return workLogItems
+
+    def getIssue(self, issueId: str) -> JiraIssue:
+        requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
+        defaultHeaders = {'Content-Type':'application/json'}
+        queryParams = {'fields':'parent,labels'}
+        timeoutSeconds = 10
+
+        response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
+        response.raise_for_status
+        jsonResponse = response.json()
+
+        issueKey = jsonResponse["key"]
+        jiraIssue = JiraIssue(issueId=issueId, issueKey=issueKey)
+
+        fieldsJsonObject = jsonResponse["fields"]
+        if 'labels' in fieldsJsonObject:
+            for labelValue in jsonResponse["fields"]["labels"]:
+                jiraIssue.addLabel(labelValue)
+
+        if 'parent' in fieldsJsonObject:
+            parentField = jsonResponse["fields"]["parent"]
+            epicKey = parentField["key"]
+            epicDescription = parentField["fields"]["summary"]
+            jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription)
+
+        return jiraIssue
+
 
 
     def _getUpdatedWorklogsSince(self, sinceUnixTimeStampMs: float):

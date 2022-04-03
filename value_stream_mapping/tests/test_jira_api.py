@@ -128,6 +128,39 @@ class TestJiraApi(unittest.TestCase):
                         worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], maxNrWorklogItemsInSingleRequest=1)
                         self._validate_getWorklogItems_response(worklogItems)
 
+    def test_getIssue_no_parent_with_labels(self):
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_issue_no_parent_with_labels.json')) as file:
+            with responses.RequestsMock() as rsps:
+                rsps.add(
+                    method=responses.GET,
+                    url='https://jira.com/rest/api/3/issue/40054',
+                    json=json.load(file),
+                    status=200)
+
+                api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                jiraIssue = api.getIssue(issueId='40054')
+                self.assertEqual(jiraIssue.issueId, '40054')
+                self.assertEqual(jiraIssue.issueKey, 'CP-6384')
+                self.assertEqual(jiraIssue.epic, None)
+                self.assertEqual(jiraIssue.labels, ['ANALYSES', '2ndlabel'])
+
+    def test_getIssue_with_parent_no_labels(self):
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_issue_with_parent_no_labels.json')) as file:
+            with responses.RequestsMock() as rsps:
+                rsps.add(
+                    method=responses.GET,
+                    url='https://jira.com/rest/api/3/issue/40576',
+                    json=json.load(file),
+                    status=200)
+
+                api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                jiraIssue = api.getIssue(issueId='40576')
+                self.assertEqual(jiraIssue.issueId, '40576')
+                self.assertEqual(jiraIssue.issueKey, 'CP-6615')
+                self.assertEqual(jiraIssue.epic.key, 'CP-6495')
+                self.assertEqual(jiraIssue.epic.description, 'Pilot developments')
+                self.assertEqual(jiraIssue.labels, [])
+
 
     def _validate_getWorklogItems_response(self, worklogItems):
         self.assertEqual(len(worklogItems), 3)
