@@ -41,7 +41,6 @@ class JiraApi:
 
 
     def getUpdatedWorklogIdsSince(self, since: datetime) -> List[int]:
-        # First get the worklog id's
         isLastPage = False
         sinceUnixTimestampMs = int(since.timestamp() * 1000)
         workLogIds = []
@@ -97,46 +96,6 @@ class JiraApi:
         requestBody = { "ids": worklogIds }
 
         response = requests.post(requestUrl, headers=defaultHeaders, auth=(self.user, self.password), data=json.dumps(requestBody), timeout=timeoutSeconds)
-        response.raise_for_status
-        return response.json()
-
-
-    def getIssuesFor(self, projectKey: str) -> List[JiraIssue]:
-        
-        jsonResponse = self._searchRequest(projectKey=projectKey, startAt=0, maxResults=self.maxResultsPerRequest)
-        totalItems = jsonResponse['total']
-        print("Total items: " + str(totalItems))
-        processedItems = 0
-        issues = []
-        
-        while (processedItems < totalItems):
-            for jsonIssue in jsonResponse['issues']:
-                issue = JiraIssue(issueKey=jsonIssue['key'], issueType=jsonIssue['fields']['issuetype']['name'])
-                changelog = jsonIssue['changelog']
-                for history in changelog['histories']:
-                    creationDate = parse(history['created'])
-                    for historyItem in history['items']:
-                        if (historyItem['field'] == 'status'):
-                            issue.addChange(JiraIssueChange(date = creationDate, fromStatus=historyItem['fromString'], toStatus=historyItem['toString']))
-                        elif ((historyItem['field'] == 'Sprint') and (historyItem['toString'] != None)):
-                            issue.hasBeenPartOfSprint = True
-                        elif (historyItem['field'] == 'Flagged'):
-                            issue.hasBeenBlocked = True
-                issues.append(issue)
-                processedItems += 1
-            print("Processed items: " + str(processedItems))
-            if (processedItems < totalItems):
-                jsonResponse = self._searchRequest(projectKey=projectKey, startAt=processedItems, maxResults=self.maxResultsPerRequest)
-        return issues
-
-    def _searchRequest(self, projectKey, startAt, maxResults):
-        requestUrl = self.baseUrl + 'rest/api/2/search'
-        defaultHeaders = {'Content-Type':'application/json'}
-        
-        queryParams = {'jql':'project=' + projectKey, 'startAt': startAt, 'maxResults': maxResults, 'fields':'key,issuetype', 'expand':'changelog'}
-        timeoutSeconds = 10
-
-        response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
         response.raise_for_status
         return response.json()
         
