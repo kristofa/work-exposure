@@ -28,7 +28,7 @@ class TestJiraApi(unittest.TestCase):
 
                 api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
                 issues = api.getIssuesFor(projectKey="PROJECTKEY")
-                self._verify_getIssuesFor_response(issues)
+                self._validate_getIssuesFor_response(issues)
 
 
     """
@@ -52,10 +52,10 @@ class TestJiraApi(unittest.TestCase):
 
                     api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd', maxResultsPerRequest=2)
                     issues = api.getIssuesFor(projectKey="PROJECTKEY")
-                    self._verify_getIssuesFor_response(issues)
+                    self._validate_getIssuesFor_response(issues)
         
 
-    def _verify_getIssuesFor_response(self, issues):
+    def _validate_getIssuesFor_response(self, issues):
         self.assertEqual(len(issues), 3)
                 
         firstIssue = issues[0]
@@ -142,8 +142,6 @@ class TestJiraApi(unittest.TestCase):
     Tests retrieving worklog items based on worklog item ids.
     """
     def test_getWorkLogItems_singleCall(self):
-        worklogItemIds = [1, 2, 3]
-
         with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_single_response.json')) as file:
             with responses.RequestsMock() as rsps:
                 rsps.add(
@@ -154,8 +152,86 @@ class TestJiraApi(unittest.TestCase):
                     status=200)
 
                 api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                workLogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744])
-                self.assertEqual(len(workLogItems), 3)
+                worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744])
+                self._validate_getWorklogItems_response(worklogItems)
+
+    """
+    Tests retrieving worklog items based on worklog item ids when needing more than 1 call
+    """
+    def test_getWorkLogItems_TwoCalls(self):
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_two_responses_part1.json')) as file1:
+            with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_two_responses_part2.json')) as file2:
+                with responses.RequestsMock() as rsps:
+                    rsps.add(
+                        method=responses.POST,
+                        url='https://jira.com/rest/api/3/worklog/list',
+                        match=[matchers.json_params_matcher({"ids": [40031, 40032]})],
+                        json=json.load(file1),
+                        status=200)
+                    rsps.add(
+                        method=responses.POST,
+                        url='https://jira.com/rest/api/3/worklog/list',
+                        match=[matchers.json_params_matcher({"ids": [40744]})],
+                        json=json.load(file2),
+                        status=200)
+
+                    api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                    worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], maxNrWorklogItemsInSingleRequest=2)
+                    self._validate_getWorklogItems_response(worklogItems)
+
+    """
+    Tests retrieving worklog items based on worklog item ids when needing 3 calls
+    """
+    def test_getWorkLogItems_ThreeCalls(self):
+        with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_three_responses_part1.json')) as file1:
+            with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_three_responses_part2.json')) as file2:
+                with open(os.path.join(self.directoryCurrentFile, 'jira_get_worklog_items_three_responses_part3.json')) as file3:
+                    with responses.RequestsMock() as rsps:
+                        rsps.add(
+                            method=responses.POST,
+                            url='https://jira.com/rest/api/3/worklog/list',
+                            match=[matchers.json_params_matcher({"ids": [40031]})],
+                            json=json.load(file1),
+                            status=200)
+                        rsps.add(
+                            method=responses.POST,
+                            url='https://jira.com/rest/api/3/worklog/list',
+                            match=[matchers.json_params_matcher({"ids": [40032]})],
+                            json=json.load(file2),
+                            status=200)
+                        rsps.add(
+                            method=responses.POST,
+                            url='https://jira.com/rest/api/3/worklog/list',
+                            match=[matchers.json_params_matcher({"ids": [40744]})],
+                            json=json.load(file3),
+                            status=200)
+
+                        api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
+                        worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], maxNrWorklogItemsInSingleRequest=1)
+                        self._validate_getWorklogItems_response(worklogItems)
+
+
+    def _validate_getWorklogItems_response(self, worklogItems):
+        self.assertEqual(len(worklogItems), 3)
+
+        firstWorklogItem = worklogItems[0]
+        self.assertEqual(firstWorklogItem.issueId, '39895')
+        self.assertEqual(firstWorklogItem.author, 'John Doe')
+        self.assertEqual(firstWorklogItem.date, parse('2022-01-03T09:53:42.724+0100'))
+        self.assertEqual(firstWorklogItem.timeSpentSeconds, 14400)
+
+        secondWorklogItem = worklogItems[1]
+        self.assertEqual(secondWorklogItem.issueId, '40011')
+        self.assertEqual(secondWorklogItem.author, 'Peter Selie')
+        self.assertEqual(secondWorklogItem.date, parse('2022-01-03T15:30:09.333+0100'))
+        self.assertEqual(secondWorklogItem.timeSpentSeconds, 3600)
+
+        thirdWorklogItem = worklogItems[2]
+        self.assertEqual(thirdWorklogItem.issueId, '40054')
+        self.assertEqual(thirdWorklogItem.author, 'Maria Sharapova')
+        self.assertEqual(thirdWorklogItem.date, parse('2022-03-29T00:00:00.000+0200'))
+        self.assertEqual(thirdWorklogItem.timeSpentSeconds, 18000)
+
 
 if __name__ == '__main__':
     unittest.main()

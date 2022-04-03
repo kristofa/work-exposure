@@ -62,16 +62,14 @@ class JiraApi:
         workLogItems = []
         for i in range(0, nrOfIterations):
             fromIndex = i * maxNrWorklogItemsInSingleRequest
-            toIndex = (fromIndex + maxNrWorklogItemsInSingleRequest - 1)
-            if (fromIndex + maxNrWorklogItemsInSingleRequest - 1 > nrOfWorkLogItems):
+            toIndex = fromIndex + maxNrWorklogItemsInSingleRequest
+            if (fromIndex + maxNrWorklogItemsInSingleRequest > nrOfWorkLogItems):
                 toIndex = nrOfWorkLogItems
 
             workLogItemsForRequest = list(islice(worklogItemIds, fromIndex, toIndex))
             jsonResponse = self._getWorklogs(workLogItemsForRequest)
             for worklogItem in jsonResponse:
-                authorJsonObject = worklogItem["author"]
-                author = authorJsonObject["displayName"]
-
+                author = worklogItem["author"]["displayName"]
                 issueId = worklogItem["issueId"]
                 date = parse(worklogItem["started"])
                 timeSpentSeconds = worklogItem["timeSpentSeconds"]

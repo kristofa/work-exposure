@@ -1,0 +1,67 @@
+[
+    {
+        "self": "https://company.atlassian.net/rest/api/3/issue/40054/worklog/40744",
+        "author":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A6caa4329-0928-4628-90e4-f75b7e6f2f4a",
+            "accountId": "557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a",
+            "emailAddress": "maria.sharapova@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/32"
+            },
+            "displayName": "Maria Sharapova",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "updateAuthor":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A6caa4329-0928-4628-90e4-f75b7e6f2f4a",
+            "accountId": "557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a",
+            "emailAddress": "maria.sharapova@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:6caa4329-0928-4628-90e4-f75b7e6f2f4a/10c1f240-9c10-48de-abf3-8e9669d623c0/32"
+            },
+            "displayName": "Maria Sharapova",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "comment":
+        {
+            "version": 1,
+            "type": "doc",
+            "content":
+            [
+                {
+                    "type": "paragraph",
+                    "content":
+                    [
+                        {
+                            "type": "text",
+                            "text": "Security meeting"
+                        },
+                        {
+                            "type": "hardBreak"
+                        }
+                    ]
+                }
+            ]
+        },
+        "created": "2022-03-30T18:37:37.330+0200",
+        "updated": "2022-03-30T18:38:54.959+0200",
+        "started": "2022-03-29T00:00:00.000+0200",
+        "timeSpent": "5h",
+        "timeSpentSeconds": 18000,
+        "id": "40744",
+        "issueId": "40054"
+    }
+]

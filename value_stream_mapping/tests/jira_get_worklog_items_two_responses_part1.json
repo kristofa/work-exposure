@@ -1,0 +1,108 @@
+[
+    {
+        "self": "https://company.atlassian.net/rest/api/3/issue/39895/worklog/40031",
+        "author":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=617179abbcb57400682b2f40",
+            "accountId": "617179abbcb57400682b2f40",
+            "emailAddress": "john.doe@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "24x24": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "16x16": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "32x32": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png"
+            },
+            "displayName": "John Doe",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "updateAuthor":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=617179abbcb57400682b2f40",
+            "accountId": "617179abbcb57400682b2f40",
+            "emailAddress": "john.doe@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "24x24": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "16x16": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png",
+                "32x32": "https://secure.gravatar.com/avatar/5c424ab36054989fa3143eb24c5e30eb?d=https%3A%2F%2Favatar-management--avatars.us-west-2.prod.public.atl-paas.net%2Finitials%2FKA-5.png"
+            },
+            "displayName": "John Doe",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "comment":
+        {
+            "version": 1,
+            "type": "doc",
+            "content":
+            [
+                {
+                    "type": "paragraph",
+                    "content":
+                    [
+                        {
+                            "type": "text",
+                            "text": "Prepare all the tickets for the designer next week."
+                        }
+                    ]
+                }
+            ]
+        },
+        "created": "2022-01-03T13:54:17.685+0100",
+        "updated": "2022-01-03T13:54:17.685+0100",
+        "started": "2022-01-03T09:53:42.724+0100",
+        "timeSpent": "4h",
+        "timeSpentSeconds": 14400,
+        "id": "40031",
+        "issueId": "39895"
+    },
+    {
+        "self": "https://company.atlassian.net/rest/api/3/issue/40011/worklog/40032",
+        "author":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "accountId": "557058:43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "emailAddress": "peter.selie@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/32"
+            },
+            "displayName": "Peter Selie",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "updateAuthor":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "accountId": "557058:43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "emailAddress": "peter.selie@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/32"
+            },
+            "displayName": "Peter Selie",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "created": "2022-01-03T16:30:13.596+0100",
+        "updated": "2022-01-03T16:30:13.596+0100",
+        "started": "2022-01-03T15:30:09.333+0100",
+        "timeSpent": "1h",
+        "timeSpentSeconds": 3600,
+        "id": "40032",
+        "issueId": "40011"
+    }
+]

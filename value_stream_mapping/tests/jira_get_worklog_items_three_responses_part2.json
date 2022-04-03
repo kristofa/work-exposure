@@ -1,0 +1,46 @@
+[
+    {
+        "self": "https://company.atlassian.net/rest/api/3/issue/40011/worklog/40032",
+        "author":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "accountId": "557058:43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "emailAddress": "peter.selie@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/32"
+            },
+            "displayName": "Peter Selie",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "updateAuthor":
+        {
+            "self": "https://company.atlassian.net/rest/api/3/user?accountId=557058%3A43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "accountId": "557058:43153a0a-5338-41ed-91a3-186b18bc8e0e",
+            "emailAddress": "peter.selie@company.com",
+            "avatarUrls":
+            {
+                "48x48": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/48",
+                "24x24": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/24",
+                "16x16": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/16",
+                "32x32": "https://avatar-management--avatars.us-west-2.prod.public.atl-paas.net/557058:43153a0a-5338-41ed-91a3-186b18bc8e0e/21de2c8a-cfe0-41c0-8ff9-30d3128385b9/32"
+            },
+            "displayName": "Peter Selie",
+            "active": true,
+            "timeZone": "Europe/Berlin",
+            "accountType": "atlassian"
+        },
+        "created": "2022-01-03T16:30:13.596+0100",
+        "updated": "2022-01-03T16:30:13.596+0100",
+        "started": "2022-01-03T15:30:09.333+0100",
+        "timeSpent": "1h",
+        "timeSpentSeconds": 3600,
+        "id": "40032",
+        "issueId": "40011"
+    }
+]
