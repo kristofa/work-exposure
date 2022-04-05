@@ -41,10 +41,12 @@ class JiraApi:
 
 
     def getUpdatedWorklogIdsSince(self, since: datetime) -> List[int]:
+        print('Getting updated worklog ids since', since)
         isLastPage = False
         sinceUnixTimestampMs = int(since.timestamp() * 1000)
         workLogIds = []
         while isLastPage == False:
+            print('Querying page')
             jsonResponse = self._getUpdatedWorklogsSince(sinceUnixTimestampMs)
             sinceUnixTimestampMs = jsonResponse["until"] + 1
             isLastPage = jsonResponse["lastPage"]
@@ -53,6 +55,7 @@ class JiraApi:
         return workLogIds
 
     def getWorkLogItems(self, worklogItemIds: List[int], maxNrWorklogItemsInSingleRequest = 100) -> List[JiraWorklogItem]:
+        print('Getting worklog items')
         nrOfWorkLogItems = len(worklogItemIds)
         nrOfIterations = int(nrOfWorkLogItems / maxNrWorklogItemsInSingleRequest)
         if ((nrOfWorkLogItems % maxNrWorklogItemsInSingleRequest) > 0):
@@ -60,6 +63,7 @@ class JiraApi:
 
         workLogItems = []
         for i in range(0, nrOfIterations):
+            print('iteration', i, '/', nrOfIterations)
             fromIndex = i * maxNrWorklogItemsInSingleRequest
             toIndex = fromIndex + maxNrWorklogItemsInSingleRequest
             if (fromIndex + maxNrWorklogItemsInSingleRequest > nrOfWorkLogItems):
@@ -79,6 +83,7 @@ class JiraApi:
         return workLogItems
 
     def getIssue(self, issueId: str) -> JiraIssue:
+        print('Get issue ', issueId)
         requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
         defaultHeaders = {'Content-Type':'application/json'}
         queryParams = {'fields':'parent,labels'}
