@@ -20,7 +20,11 @@ class TimeByEpic:
         self.totalSecondsSpent = 0
         self.totalSecondsByPerson = {}
 
+class JiraIssue:
 
+    def __init__(self, issueKey:str, issueDescription:str):
+        self.issueKey = issueKey
+        self.description = issueDescription
 
 class JiraExportTimePerEpic:
 
@@ -34,6 +38,7 @@ class JiraExportTimePerEpic:
 
         jiraIssues = {}
         epics = {}
+        ticketsWithoutEpics = {}
         epicOverview = EpicOverview(startDate)
 
         index = 0
@@ -57,10 +62,13 @@ class JiraExportTimePerEpic:
                 epic.totalSecondsByPerson[jiraWorkLogItem.author] = secondsSpentByAuthor + jiraWorkLogItem.timeSpentSeconds
                 epicOverview.totalSecondsSpentOnEpics += jiraWorkLogItem.timeSpentSeconds
             else:
-                epicOverview.ticketsWithoutEpic.append(jiraIssue.issueKey)
+                existingIssue = ticketsWithoutEpics.get(jiraIssue.issueKey)
+                if (existingIssue == None):
+                    ticketsWithoutEpics[jiraIssue.issueKey] = JiraIssue(issueKey=jiraIssue.issueKey, issueDescription=jiraIssue.description)
 
             epicOverview.totalSecondsSpent += jiraWorkLogItem.timeSpentSeconds
         
+        epicOverview.ticketsWithoutEpic = list(ticketsWithoutEpics.values())
         epicOverview.overviewByEpic = list(epics.values())
 
         return epicOverview

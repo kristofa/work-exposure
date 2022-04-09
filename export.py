@@ -34,7 +34,7 @@ with open(getCsvFilename('epic_overview', since, today), 'w') as epicOverviewFil
                 epicOverviewByPersonFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key, str(secondsToWorkDays(epic.totalSecondsByPerson[key]))))
 
 with open(getCsvFilename('epic_overview_issues_without_epic', since, today), 'w') as issuesWithoutEpicFile:
-    issuesWithoutEpicFile.write('issueKey\n')
-    for issueKey in epicOverview.ticketsWithoutEpic:
-        issuesWithoutEpicFile.write('{0}\n'.format(issueKey))
+    issuesWithoutEpicFile.write('issueKey|description\n')
+    for jiraIssue in epicOverview.ticketsWithoutEpic:
+        issuesWithoutEpicFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))
 

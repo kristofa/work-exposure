@@ -8,9 +8,10 @@ from itertools import islice
 
 
 class JiraIssue:
-    def __init__(self, issueId, issueKey):
+    def __init__(self, issueId, issueKey, description):
         self.issueId = issueId
         self.issueKey = issueKey
+        self.description = description
         self.epic = None
         self.labels = []
 
@@ -86,7 +87,7 @@ class JiraApi:
         print('Get issue ', issueId)
         requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
         defaultHeaders = {'Content-Type':'application/json'}
-        queryParams = {'fields':'parent,labels'}
+        queryParams = {'fields':'parent,labels,summary'}
         timeoutSeconds = 10
 
         response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
@@ -94,7 +95,8 @@ class JiraApi:
         jsonResponse = response.json()
 
         issueKey = jsonResponse["key"]
-        jiraIssue = JiraIssue(issueId=issueId, issueKey=issueKey)
+        issueDescription = jsonResponse["fields"]["summary"]
+        jiraIssue = JiraIssue(issueId=issueId, issueKey=issueKey, description=issueDescription)
 
         fieldsJsonObject = jsonResponse["fields"]
         if 'labels' in fieldsJsonObject:
