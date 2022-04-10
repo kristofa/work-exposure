@@ -143,6 +143,7 @@ class TestJiraApi(unittest.TestCase):
                 self.assertEqual(jiraIssue.issueKey, 'CP-6384')
                 self.assertEqual(jiraIssue.epic, None)
                 self.assertEqual(jiraIssue.labels, ['ANALYSES', '2ndlabel'])
+                self.assertEqual(jiraIssue.description, 'a description')
 
     def test_getIssue_with_parent_no_labels(self):
         with open(os.path.join(self.directoryCurrentFile, 'jira_get_issue_with_parent_no_labels.json')) as file:
@@ -160,6 +161,7 @@ class TestJiraApi(unittest.TestCase):
                 self.assertEqual(jiraIssue.epic.key, 'CP-6495')
                 self.assertEqual(jiraIssue.epic.description, 'Pilot developments')
                 self.assertEqual(jiraIssue.labels, [])
+                self.assertEqual(jiraIssue.description, 'another description')
 
 
     def _validate_getWorklogItems_response(self, worklogItems):

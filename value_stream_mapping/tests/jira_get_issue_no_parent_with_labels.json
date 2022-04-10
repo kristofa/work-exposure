@@ -5,6 +5,7 @@
     "key": "CP-6384",
     "fields":
     {
+        "summary": "a description",
         "labels":
         [
             "ANALYSES", "2ndlabel"

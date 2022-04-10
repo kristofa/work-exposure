@@ -5,6 +5,7 @@
     "key": "CP-6615",
     "fields":
     {
+        "summary": "another description",
         "parent":
         {
             "id": "40266",
