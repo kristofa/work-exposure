@@ -2,6 +2,8 @@ from datetime import datetime
 from value_stream_mapping.jira import jira_api
 from value_stream_mapping.jira import jira_export_time_by_epic
 from value_stream_mapping.jira import jira_export_time_by_worktype
+from value_stream_mapping.domain import epic_overview
+from value_stream_mapping.domain import worktype_overview
 
 since = datetime.fromisoformat('2022-01-01')
 today = datetime.today()
@@ -15,7 +17,7 @@ def _getCsvFilename(prefix: str, fromDate: datetime, untilDate: datetime):
     return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
 
 
-def _exportEpicOverview(epicOverview: jira_export_time_by_epic.EpicOverview):
+def _exportEpicOverview(epicOverview: epic_overview.EpicOverview):
     with open(_getCsvFilename('epic_overview_summary', since, today), 'w') as epicOverviewSummaryFile:
         epicOverviewSummaryFile.write('from|to|total_workdays_logged_on_epics|total_workdays_logged\n')
         totalWorkDaysLoggedOnEpics = _secondsToWorkDays(epicOverview.totalSecondsSpentOnEpics)
@@ -41,7 +43,7 @@ epicOverview = exportByEpic.export(startDate = since)
 _exportEpicOverview(epicOverview=epicOverview)
 
 
-def _exportWorktypeOverview(worktypeOverview: jira_export_time_by_worktype.WorkTypeOverview):
+def _exportWorktypeOverview(worktypeOverview: worktype_overview.WorkTypeOverview):
     with open(_getCsvFilename('worktype_overview_summary', since, today), 'w') as worktypeOverviewSummaryFile:
         worktypeOverviewSummaryFile.write('from|to|total_workdays_logged_items_with_worktype|total_workdays_logged\n')
         totalWorkDaysLoggedOnItemsWithWorktype = _secondsToWorkDays(worktypeOverview.totalSecondsSpentOnItemsWithWorkType)

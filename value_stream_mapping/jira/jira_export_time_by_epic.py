@@ -1,30 +1,7 @@
-from datetime import datetime
 from . import jira_api
+from value_stream_mapping.domain import epic_overview
+from datetime import datetime
 
-
-class EpicOverview:
-
-    def __init__(self, since:datetime):
-        self.since = since
-        self.totalSecondsSpent = 0
-        self.totalSecondsSpentOnEpics = 0
-        self.ticketsWithoutEpic = []
-        self.overviewByEpic = []
-
-
-class TimeByEpic:
-
-    def __init__(self, epicKey:str, epicName:str):
-        self.epicKey = epicKey
-        self.epicName = epicName
-        self.totalSecondsSpent = 0
-        self.totalSecondsByPerson = {}
-
-class JiraIssue:
-
-    def __init__(self, issueKey:str, issueDescription:str):
-        self.issueKey = issueKey
-        self.description = issueDescription
 
 class JiraExportTimeByEpic:
 
@@ -32,14 +9,14 @@ class JiraExportTimeByEpic:
         self.jiraApi = jiraApi
 
 
-    def export(self, startDate: datetime) -> EpicOverview:
+    def export(self, startDate: datetime) -> epic_overview.EpicOverview:
         workLogItemIds = self.jiraApi.getUpdatedWorklogIdsSince(startDate)
         jiraWorkLogItems = self.jiraApi.getWorkLogItems(workLogItemIds)
 
         jiraIssues = {}
         epics = {}
         ticketsWithoutEpics = {}
-        epicOverview = EpicOverview(startDate)
+        epicOverview = epic_overview.EpicOverview(startDate)
 
         index = 0
         for jiraWorkLogItem in jiraWorkLogItems:
@@ -55,7 +32,7 @@ class JiraExportTimeByEpic:
                 epicDescription = jiraIssue.epic.description
                 epic = epics.get(epicKey)
                 if epic == None:
-                    epic = TimeByEpic(epicKey, epicDescription)
+                    epic = epic_overview.TimeByEpic(epicKey, epicDescription)
                     epics[epicKey] = epic
                 epic.totalSecondsSpent += jiraWorkLogItem.timeSpentSeconds
                 secondsSpentByAuthor = epic.totalSecondsByPerson.get(jiraWorkLogItem.author, 0)
@@ -64,7 +41,7 @@ class JiraExportTimeByEpic:
             else:
                 existingIssue = ticketsWithoutEpics.get(jiraIssue.issueKey)
                 if (existingIssue == None):
-                    ticketsWithoutEpics[jiraIssue.issueKey] = JiraIssue(issueKey=jiraIssue.issueKey, issueDescription=jiraIssue.description)
+                    ticketsWithoutEpics[jiraIssue.issueKey] = epic_overview.Issue(issueKey=jiraIssue.issueKey, issueDescription=jiraIssue.description)
 
             epicOverview.totalSecondsSpent += jiraWorkLogItem.timeSpentSeconds
         
