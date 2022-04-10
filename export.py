@@ -2,6 +2,7 @@ from datetime import datetime
 from value_stream_mapping.jira import jira_api
 from value_stream_mapping.jira import jira_export_time_by_epic
 from value_stream_mapping.jira import jira_export_time_by_worktype
+from value_stream_mapping.jira import jira_export_cycletime_by_epic
 from value_stream_mapping.domain import epic_overview
 from value_stream_mapping.domain import worktype_overview
 
@@ -69,4 +70,15 @@ exportByWorktype = jira_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi
 worktypeOverview = exportByWorktype.export(startDate = since)
 _exportWorktypeOverview(worktypeOverview=worktypeOverview)
 
+
+exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi)
+itemCycleTimeOverview = exportCycletimeByEpic.export(startDate = since)
+for item in itemCycleTimeOverview:
+    print('--------------------')
+    print('Item Key', item.itemKey)
+    print('Item description', item.itemDescription)
+    print('--')
+    for inProgressItem in item.getsInProgressOrdered():
+        print('   start:',inProgressItem.start.isoformat())
+        print('   end  :',inProgressItem.end.isoformat())
 
