@@ -36,7 +36,7 @@ def _exportEpicOverview(epicOverview: jira_export_time_by_epic.EpicOverview):
         for jiraIssue in epicOverview.ticketsWithoutEpic:
             issuesWithoutEpicFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))
 
-exportByEpic = jira_export_time_by_epic.JiraExportTimePerEpic(jiraApi=jiraApi)
+exportByEpic = jira_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi)
 epicOverview = exportByEpic.export(startDate = since)
 _exportEpicOverview(epicOverview=epicOverview)
 

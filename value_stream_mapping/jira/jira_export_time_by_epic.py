@@ -26,7 +26,7 @@ class JiraIssue:
         self.issueKey = issueKey
         self.description = issueDescription
 
-class JiraExportTimePerEpic:
+class JiraExportTimeByEpic:
 
     def __init__(self, jiraApi: jira_api.JiraApi):
         self.jiraApi = jiraApi
