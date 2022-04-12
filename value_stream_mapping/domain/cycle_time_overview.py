@@ -23,7 +23,7 @@ class ItemCycletimeOverview:
         self.itemDescription = itemDescription
         self.inProgress: List[ItemInProgress] = []
 
-    def getsInProgressOrdered(self):
+    def getsInProgressOrdered(self) -> List[ItemInProgress]:
         return sorted(self.inProgress)
 
     

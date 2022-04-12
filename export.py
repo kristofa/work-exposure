@@ -1,15 +1,18 @@
 from datetime import datetime
+from value_stream_mapping import plantuml
 from value_stream_mapping.jira import jira_api
 from value_stream_mapping.jira import jira_export_time_by_epic
 from value_stream_mapping.jira import jira_export_time_by_worktype
 from value_stream_mapping.jira import jira_export_cycletime_by_epic
 from value_stream_mapping.domain import epic_overview
 from value_stream_mapping.domain import worktype_overview
+from value_stream_mapping.plantuml import gantt_diagram_exporter
 
 since = datetime.fromisoformat('2022-01-01')
 today = datetime.today()
 
 jiraApi = jira_api.JiraApi(baseUrl='https://company.atlassian.net/',user='user@company.com',password='userToken')
+
 
 def _secondsToWorkDays(seconds):
     return round(seconds / 60 / 60 / 8, 1)
@@ -73,12 +76,8 @@ _exportWorktypeOverview(worktypeOverview=worktypeOverview)
 
 exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi)
 itemCycleTimeOverview = exportCycletimeByEpic.export(startDate = since)
-for item in itemCycleTimeOverview:
-    print('--------------------')
-    print('Item Key', item.itemKey)
-    print('Item description', item.itemDescription)
-    print('--')
-    for inProgressItem in item.getsInProgressOrdered():
-        print('   start:',inProgressItem.start.isoformat())
-        print('   end  :',inProgressItem.end.isoformat())
+
+gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Export",fromDate=since, toDate=today)
+gantDiagramExporter.export(items = itemCycleTimeOverview, outputFileName="plantuml")
+
 
