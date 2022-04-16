@@ -1,12 +1,14 @@
 from dataclasses import dataclass
 from . import jira_api
 from value_stream_mapping.domain import cycle_time_overview
+from .import jira_exporter
 from datetime import datetime
 from datetime import date
 import functools
 from functools import total_ordering
 from typing import Dict
 from typing import List
+from value_stream_mapping.plantuml import gantt_diagram_exporter
 
 
 class JiraEpic:
@@ -27,38 +29,26 @@ class JiraWorkLogItem:
         return (self.dateOfWork == obj.dateOfWork)
 
 
-class JiraExportCycleTimeByEpic:
+class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi):
+    def __init__(self, jiraApi: jira_api.JiraApi, startDate: datetime):
         self.jiraApi = jiraApi
+        self.startDate = startDate
+        self.epics: Dict[str, JiraEpic] = {}
 
-    def export(self, startDate:datetime) -> List[cycle_time_overview.ItemCycletimeOverview]:
-        workLogItemIds = self.jiraApi.getUpdatedWorklogIdsSince(startDate)
-        jiraWorkLogItems = self.jiraApi.getWorkLogItems(workLogItemIds)
+    def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
+        if issue.epic != None:
+            epicKey = issue.epic.key
+            epicDescription = issue.epic.description
+            epic = self.epics.get(epicKey)
+            if epic == None:
+                epic = JiraEpic(epicKey, epicDescription)
+                self.epics[epicKey] = epic
+            epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=worklogItem.date.date()))
 
-        jiraIssues: Dict[str, jira_api.JiraIssue] = {}
-        epics: Dict[str, JiraEpic] = {}
+    def _getItemCycletimeOverview(self) -> List[cycle_time_overview.ItemCycletimeOverview]:
         itemsCycleTimeOverview: List[cycle_time_overview.ItemCycletimeOverview] = []
-
-        index = 0
-        for jiraWorkLogItem in jiraWorkLogItems:
-            index += 1
-            print('Processing JiraWorklogItem', index, 'from', len(jiraWorkLogItems))
-            jiraIssue = jiraIssues.get(jiraWorkLogItem.issueId)
-            if (jiraIssue == None):
-                jiraIssue = self.jiraApi.getIssue(jiraWorkLogItem.issueId)
-                jiraIssues[jiraWorkLogItem.issueId] = jiraIssue
-
-            if jiraIssue.epic != None:
-                epicKey = jiraIssue.epic.key
-                epicDescription = jiraIssue.epic.description
-                epic = epics.get(epicKey)
-                if epic == None:
-                    epic = JiraEpic(epicKey, epicDescription)
-                    epics[epicKey] = epic
-                epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=jiraWorkLogItem.date.date()))
-        
-        for epic in epics.values():
+        for epic in self.epics.values():
             itemCycleTimeOverview = cycle_time_overview.ItemCycletimeOverview(itemKey=epic.key, itemDescription=epic.description)
             sortedJiraWorklogs = sorted(epic.jiraWorkLogs)
             startDate = sortedJiraWorklogs[0].dateOfWork
@@ -77,3 +67,12 @@ class JiraExportCycleTimeByEpic:
             itemsCycleTimeOverview.append(itemCycleTimeOverview)
 
         return itemsCycleTimeOverview
+
+    def exportToFiles(self):
+        today = datetime.today()
+        listOfEpics : List[cycle_time_overview.ItemCycletimeOverview] = self._getItemCycletimeOverview()
+        gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Export",fromDate=self.startDate, toDate=today)
+        gantDiagramExporter.export(items = listOfEpics, outputFileName="plantuml")
+
+
+   

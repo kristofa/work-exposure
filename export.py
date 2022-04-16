@@ -1,83 +1,44 @@
 from datetime import datetime
+from typing import Dict
+from typing import List
 from value_stream_mapping import plantuml
 from value_stream_mapping.jira import jira_api
 from value_stream_mapping.jira import jira_export_time_by_epic
 from value_stream_mapping.jira import jira_export_time_by_worktype
 from value_stream_mapping.jira import jira_export_cycletime_by_epic
+from value_stream_mapping.jira import jira_exporter
 from value_stream_mapping.domain import epic_overview
 from value_stream_mapping.domain import worktype_overview
 from value_stream_mapping.plantuml import gantt_diagram_exporter
 
 since = datetime.fromisoformat('2022-01-01')
-today = datetime.today()
 
 jiraApi = jira_api.JiraApi(baseUrl='https://company.atlassian.net/',user='user@company.com',password='userToken')
 
+workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(since)
+jiraWorkLogItems = jiraApi.getWorkLogItems(workLogItemIds)
+jiraIssues:Dict[str,jira_api.JiraIssue] = {}
 
-def _secondsToWorkDays(seconds):
-    return round(seconds / 60 / 60 / 8, 1)
+exportByEpic = jira_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, startDate=since)
+exportByWorktype = jira_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, startDate=since)
+exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, startDate=since)
 
-def _getCsvFilename(prefix: str, fromDate: datetime, untilDate: datetime):
-    return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
-
-
-def _exportEpicOverview(epicOverview: epic_overview.EpicOverview):
-    with open(_getCsvFilename('epic_overview_summary', since, today), 'w') as epicOverviewSummaryFile:
-        epicOverviewSummaryFile.write('from|to|total_workdays_logged_on_epics|total_workdays_logged\n')
-        totalWorkDaysLoggedOnEpics = _secondsToWorkDays(epicOverview.totalSecondsSpentOnEpics)
-        totalWorkDaysLogged = _secondsToWorkDays(epicOverview.totalSecondsSpent)
-        epicOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(since.isoformat(),today.isoformat(),str(totalWorkDaysLoggedOnEpics),str(totalWorkDaysLogged)))
-    
-    with open(_getCsvFilename('epic_overview', since, today), 'w') as epicOverviewFile:
-        with open(_getCsvFilename('epic_overview_by_person', since, today), 'w') as epicOverviewByPersonFile:
-            epicOverviewFile.write('epicKey|epicName|total_workdays_logged\n')
-            epicOverviewByPersonFile.write('epicKey|epicName|person|total_workdays_logged\n')
-            for epic in epicOverview.overviewByEpic:
-                epicOverviewFile.write('{0}|{1}|{2}\n'.format(epic.epicKey, epic.epicName, str(_secondsToWorkDays(epic.totalSecondsSpent))))
-                for key in epic.totalSecondsByPerson.keys():
-                    epicOverviewByPersonFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key, str(_secondsToWorkDays(epic.totalSecondsByPerson[key]))))
-
-    with open(_getCsvFilename('epic_overview_issues_without_epic', since, today), 'w') as issuesWithoutEpicFile:
-        issuesWithoutEpicFile.write('issueKey|description\n')
-        for jiraIssue in epicOverview.ticketsWithoutEpic:
-            issuesWithoutEpicFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))
-
-exportByEpic = jira_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi)
-epicOverview = exportByEpic.export(startDate = since)
-_exportEpicOverview(epicOverview=epicOverview)
+exporters:List[jira_exporter.JiraExporter] = [exportByEpic, exportByWorktype, exportCycletimeByEpic]
 
 
-def _exportWorktypeOverview(worktypeOverview: worktype_overview.WorkTypeOverview):
-    with open(_getCsvFilename('worktype_overview_summary', since, today), 'w') as worktypeOverviewSummaryFile:
-        worktypeOverviewSummaryFile.write('from|to|total_workdays_logged_items_with_worktype|total_workdays_logged\n')
-        totalWorkDaysLoggedOnItemsWithWorktype = _secondsToWorkDays(worktypeOverview.totalSecondsSpentOnItemsWithWorkType)
-        totalWorkDaysLogged = _secondsToWorkDays(worktypeOverview.totalSecondsSpent)
-        worktypeOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(since.isoformat(),today.isoformat(),str(totalWorkDaysLoggedOnItemsWithWorktype),str(totalWorkDaysLogged)))
-    
-    with open(_getCsvFilename('worktype_overview', since, today), 'w') as worktypeOverviewFile:
-        with open(_getCsvFilename('worktype_overview_by_person', since, today), 'w') as worktypeOverviewByPersonFile:
-            worktypeOverviewFile.write('worktype|total_workdays_logged\n')
-            worktypeOverviewByPersonFile.write('worktype|person|total_workdays_logged\n')
-            for worktype in worktypeOverview.overviewByWorkType:
-                worktypeOverviewFile.write('{0}|{1}\n'.format(worktype.workType, str(_secondsToWorkDays(worktype.totalSecondsSpent))))
-                for person in worktype.totalSecondsByPerson.keys():
-                    worktypeOverviewByPersonFile.write('{0}|{1}|{2}\n'.format(worktype.workType, person, str(_secondsToWorkDays(worktype.totalSecondsByPerson[person]))))
+index = 0
+for jiraWorkLogItem in jiraWorkLogItems:
+    index += 1
+    print('Processing JiraWorklogItem', index, 'from', len(jiraWorkLogItems))
+    jiraIssue = jiraIssues.get(jiraWorkLogItem.issueId)
+    if (jiraIssue == None):
+        print('Get JiraIssue', jiraWorkLogItem.issueId)
+        jiraIssue = jiraApi.getIssue(jiraWorkLogItem.issueId)
+        jiraIssues[jiraWorkLogItem.issueId] = jiraIssue
 
-    with open(_getCsvFilename('worktype_overview_issues_without_worktype', since, today), 'w') as issuesWithoutWorktypeFile:
-        issuesWithoutWorktypeFile.write('issueKey|description\n')
-        for jiraIssue in worktypeOverview.ticketsWithoutWorkType:
-            issuesWithoutWorktypeFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))
+    for exporter in exporters:
+        exporter.process(worklogItem=jiraWorkLogItem, issue=jiraIssue)
 
-
-exportByWorktype = jira_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi)
-worktypeOverview = exportByWorktype.export(startDate = since)
-_exportWorktypeOverview(worktypeOverview=worktypeOverview)
-
-
-exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi)
-itemCycleTimeOverview = exportCycletimeByEpic.export(startDate = since)
-
-gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Export",fromDate=since, toDate=today)
-gantDiagramExporter.export(items = itemCycleTimeOverview, outputFileName="plantuml")
-
+for exporter in exporters:
+    exporter.exportToFiles()
 

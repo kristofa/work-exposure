@@ -84,7 +84,6 @@ class JiraApi:
         return workLogItems
 
     def getIssue(self, issueId: str) -> JiraIssue:
-        print('Get issue ', issueId)
         requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
         defaultHeaders = {'Content-Type':'application/json'}
         queryParams = {'fields':'parent,labels,summary'}
