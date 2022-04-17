@@ -14,13 +14,15 @@ class GanttDiagramExporter:
     def _getPlantUMLFilename(self, baseFilename: str):
         return baseFilename + '_from_'+self.fromDate.date().isoformat()+'_until_'+self.toDate.date().isoformat()+'.pu'
 
-    def export(self, items: List[cycle_time_overview.ItemCycletimeOverview], outputFileName: str):
-        with open(self._getPlantUMLFilename('epic_overview_summary'), 'w') as plantUMLFile:
+    def export(self, items: List[cycle_time_overview.ItemCycletimeOverview]):
+        with open(self._getPlantUMLFilename('epic_work_in_progress_overview'), 'w') as plantUMLFile:
             plantUMLFile.write('@startuml\n')
             plantUMLFile.write('Project starts {0}\n'.format(self.fromDate.date().isoformat()))
             plantUMLFile.write('saturday are closed\n')
             plantUMLFile.write('sunday are closed\n')
-
+            plantUMLFile.write('title {0}\n'.format(self.title))
+            plantUMLFile.write('\n')
+            
             epicCounter = 0
             for item in items:
                 key = item.itemKey
