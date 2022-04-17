@@ -16,6 +16,7 @@ class JiraEpic:
         self.key = key
         self.description = description
         self.jiraWorkLogs: List[JiraWorkLogItem] = []
+        self.totalSecondsLogged = 0
 
 @total_ordering
 class JiraWorkLogItem:
@@ -45,11 +46,26 @@ class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
                 epic = JiraEpic(epicKey, epicDescription)
                 self.epics[epicKey] = epic
             epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=worklogItem.date.date()))
+            epic.totalSecondsLogged += worklogItem.timeSpentSeconds
+
+    def exportToFiles(self):
+        today = datetime.today()
+        listOfEpics : List[cycle_time_overview.ItemCycletimeOverview] = self._getItemCycletimeOverview()
+        gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Work In Progress overview",fromDate=self.startDate, toDate=today)
+        gantDiagramExporter.export(items = listOfEpics)
+
+        with open(self._getCsvFilename('epic_flow_efficiency', self.startDate, today), 'w') as epicFlowEfficiencyFile:
+            epicFlowEfficiencyFile.write('epicKey|epicName|flow_efficiency\n')
+            for item in listOfEpics:
+                epicFlowEfficiencyFile.write('{0}|{1}|{2}\n'.format(item.itemKey, item.itemDescription, str(item.flowEfficiency())))
+
+    
 
     def _getItemCycletimeOverview(self) -> List[cycle_time_overview.ItemCycletimeOverview]:
         itemsCycleTimeOverview: List[cycle_time_overview.ItemCycletimeOverview] = []
         for epic in self.epics.values():
             itemCycleTimeOverview = cycle_time_overview.ItemCycletimeOverview(itemKey=epic.key, itemDescription=epic.description)
+            itemCycleTimeOverview.totalTimeLoggedInSeconds = epic.totalSecondsLogged
             sortedJiraWorklogs = sorted(epic.jiraWorkLogs)
             startDate = sortedJiraWorklogs[0].dateOfWork
             previousDate = sortedJiraWorklogs[0].dateOfWork
@@ -68,11 +84,15 @@ class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
 
         return itemsCycleTimeOverview
 
-    def exportToFiles(self):
-        today = datetime.today()
-        listOfEpics : List[cycle_time_overview.ItemCycletimeOverview] = self._getItemCycletimeOverview()
-        gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Export",fromDate=self.startDate, toDate=today)
-        gantDiagramExporter.export(items = listOfEpics, outputFileName="plantuml")
+    def _getCsvFilename(self, prefix: str, fromDate: datetime, untilDate: datetime):
+        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
+    
+
+    
+
+
+
+
 
 
    

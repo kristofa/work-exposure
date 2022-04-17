@@ -14,7 +14,6 @@ from value_stream_mapping.plantuml import gantt_diagram_exporter
 since = datetime.fromisoformat('2022-01-01')
 
 jiraApi = jira_api.JiraApi(baseUrl='https://company.atlassian.net/',user='user@company.com',password='userToken')
-
 workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(since)
 jiraWorkLogItems = jiraApi.getWorkLogItems(workLogItemIds)
 jiraIssues:Dict[str,jira_api.JiraIssue] = {}
