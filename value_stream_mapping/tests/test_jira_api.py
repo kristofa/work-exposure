@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from value_stream_mapping.jira import jira_api
 import unittest
 import responses
@@ -70,7 +71,7 @@ class TestJiraApi(unittest.TestCase):
                     status=200)
 
                 api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744])
+                worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], toDate=datetime.now(tz=ZoneInfo("Europe/Brussels")))
                 self._validate_getWorklogItems_response(worklogItems)
 
     """
@@ -94,7 +95,7 @@ class TestJiraApi(unittest.TestCase):
                         status=200)
 
                     api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                    worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], maxNrWorklogItemsInSingleRequest=2)
+                    worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], toDate=datetime.now(tz=ZoneInfo("Europe/Brussels")), maxNrWorklogItemsInSingleRequest=2)
                     self._validate_getWorklogItems_response(worklogItems)
 
     """
@@ -125,7 +126,7 @@ class TestJiraApi(unittest.TestCase):
                             status=200)
 
                         api = jira_api.JiraApi(baseUrl='https://jira.com/', user='aUser', password='aPwd')
-                        worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744], maxNrWorklogItemsInSingleRequest=1)
+                        worklogItems = api.getWorkLogItems(worklogItemIds=[40031, 40032, 40744],toDate=datetime.now(tz=ZoneInfo("Europe/Brussels")), maxNrWorklogItemsInSingleRequest=1)
                         self._validate_getWorklogItems_response(worklogItems)
 
     def test_getIssue_no_parent_with_labels(self):
