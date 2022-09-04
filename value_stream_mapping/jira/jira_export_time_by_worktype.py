@@ -8,11 +8,12 @@ from .import jira_exporter
 
 class JiraExportTimeByWorkType(jira_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, startDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi
-        self.startDate = startDate
+        self.fromDate = fromDate
+        self.toDate = toDate
         self.timeByWorkType:Dict[str,worktype_overview.TimeByWorkType] = {}
-        self.worktypeOverview = worktype_overview.WorkTypeOverview(startDate)
+        self.worktypeOverview = worktype_overview.WorkTypeOverview(fromDate)
         self.ticketsWithoutWorkType:Dict[str, worktype_overview.Issue] = {}
 
 
@@ -39,16 +40,15 @@ class JiraExportTimeByWorkType(jira_exporter.JiraExporter):
     def exportToFiles(self):
         self.worktypeOverview.ticketsWithoutWorkType = list(self.ticketsWithoutWorkType.values())
         self.worktypeOverview.overviewByWorkType = list(self.timeByWorkType.values())
-        today = datetime.today()
 
-        with open(self._getCsvFilename('worktype_overview_summary', self.startDate, today), 'w') as worktypeOverviewSummaryFile:
+        with open(self._getCsvFilename('worktype_overview_summary', self.fromDate, self.toDate), 'w') as worktypeOverviewSummaryFile:
             worktypeOverviewSummaryFile.write('from|to|total_workdays_logged_items_with_worktype|total_workdays_logged\n')
             totalWorkDaysLoggedOnItemsWithWorktype = self._secondsToWorkDays(self.worktypeOverview.totalSecondsSpentOnItemsWithWorkType)
             totalWorkDaysLogged = self._secondsToWorkDays(self.worktypeOverview.totalSecondsSpent)
-            worktypeOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(self.startDate.isoformat(),today.isoformat(),str(totalWorkDaysLoggedOnItemsWithWorktype),str(totalWorkDaysLogged)))
+            worktypeOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(self.fromDate.isoformat(),self.toDate.isoformat(),str(totalWorkDaysLoggedOnItemsWithWorktype),str(totalWorkDaysLogged)))
     
-        with open(self._getCsvFilename('worktype_overview', self.startDate, today), 'w') as worktypeOverviewFile:
-            with open(self._getCsvFilename('worktype_overview_by_person', self.startDate, today), 'w') as worktypeOverviewByPersonFile:
+        with open(self._getCsvFilename('worktype_overview', self.fromDate, self.toDate), 'w') as worktypeOverviewFile:
+            with open(self._getCsvFilename('worktype_overview_by_person', self.fromDate, self.toDate), 'w') as worktypeOverviewByPersonFile:
                 worktypeOverviewFile.write('worktype|total_workdays_logged\n')
                 worktypeOverviewByPersonFile.write('worktype|person|total_workdays_logged\n')
                 for worktype in self.worktypeOverview.overviewByWorkType:
@@ -56,7 +56,7 @@ class JiraExportTimeByWorkType(jira_exporter.JiraExporter):
                     for person in worktype.totalSecondsByPerson.keys():
                         worktypeOverviewByPersonFile.write('{0}|{1}|{2}\n'.format(worktype.workType, person, str(self._secondsToWorkDays(worktype.totalSecondsByPerson[person]))))
 
-        with open(self._getCsvFilename('worktype_overview_issues_without_worktype', self.startDate, today), 'w') as issuesWithoutWorktypeFile:
+        with open(self._getCsvFilename('worktype_overview_issues_without_worktype', self.fromDate, self.toDate), 'w') as issuesWithoutWorktypeFile:
             issuesWithoutWorktypeFile.write('issueKey|description\n')
             for jiraIssue in self.worktypeOverview.ticketsWithoutWorkType:
                 issuesWithoutWorktypeFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))    
@@ -71,8 +71,8 @@ class JiraExportTimeByWorkType(jira_exporter.JiraExporter):
     def _secondsToWorkDays(self, seconds):
         return round(seconds / 60 / 60 / 8, 1)
 
-    def _getCsvFilename(self, prefix: str, fromDate: datetime, untilDate: datetime):
-        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
+    def _getCsvFilename(self, prefix: str, fromDate: datetime, toDate: datetime):
+        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+toDate.date().isoformat()+'.csv'
 
 
     

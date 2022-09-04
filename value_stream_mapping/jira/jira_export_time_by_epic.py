@@ -7,11 +7,12 @@ from typing import Dict
 
 class JiraExportTimeByEpic(jira_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, startDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi
-        self.startDate = startDate
+        self.fromDate = fromDate
+        self.toDate = toDate
         self.epics:Dict[str, epic_overview.TimeByEpic] = {}
-        self.epicOverview = epic_overview.EpicOverview(startDate)
+        self.epicOverview = epic_overview.EpicOverview(fromDate)
         self.ticketsWithoutEpic:Dict[str, epic_overview.Issue] = {}
 
 
@@ -38,16 +39,15 @@ class JiraExportTimeByEpic(jira_exporter.JiraExporter):
     def exportToFiles(self):
         self.epicOverview.ticketsWithoutEpic = list(self.ticketsWithoutEpic.values())
         self.epicOverview.overviewByEpic = list(self.epics.values())
-        today = datetime.today()
 
-        with open(self._getCsvFilename('epic_overview_summary', self.startDate, today), 'w') as epicOverviewSummaryFile:
+        with open(self._getCsvFilename('epic_overview_summary', self.fromDate, self.toDate), 'w') as epicOverviewSummaryFile:
             epicOverviewSummaryFile.write('from|to|total_workdays_logged_on_epics|total_workdays_logged\n')
             totalWorkDaysLoggedOnEpics = self._secondsToWorkDays(self.epicOverview.totalSecondsSpentOnEpics)
             totalWorkDaysLogged = self._secondsToWorkDays(self.epicOverview.totalSecondsSpent)
-            epicOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(self.startDate.isoformat(),today.isoformat(),str(totalWorkDaysLoggedOnEpics),str(totalWorkDaysLogged)))
+            epicOverviewSummaryFile.write('{0}|{1}|{2}|{3}\n'.format(self.fromDate.isoformat(),self.toDate,str(totalWorkDaysLoggedOnEpics),str(totalWorkDaysLogged)))
     
-        with open(self._getCsvFilename('epic_overview', self.startDate, today), 'w') as epicOverviewFile:
-            with open(self._getCsvFilename('epic_overview_by_person', self.startDate, today), 'w') as epicOverviewByPersonFile:
+        with open(self._getCsvFilename('epic_overview', self.fromDate, self.toDate), 'w') as epicOverviewFile:
+            with open(self._getCsvFilename('epic_overview_by_person', self.fromDate, self.toDate), 'w') as epicOverviewByPersonFile:
                 epicOverviewFile.write('epicKey|epicName|total_workdays_logged\n')
                 epicOverviewByPersonFile.write('epicKey|epicName|person|total_workdays_logged\n')
                 for epic in self.epicOverview.overviewByEpic:
@@ -55,7 +55,7 @@ class JiraExportTimeByEpic(jira_exporter.JiraExporter):
                     for key in epic.totalSecondsByPerson.keys():
                         epicOverviewByPersonFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key, str(self._secondsToWorkDays(epic.totalSecondsByPerson[key]))))
 
-        with open(self._getCsvFilename('epic_overview_issues_without_epic', self.startDate, today), 'w') as issuesWithoutEpicFile:
+        with open(self._getCsvFilename('epic_overview_issues_without_epic', self.fromDate, self.toDate), 'w') as issuesWithoutEpicFile:
             issuesWithoutEpicFile.write('issueKey|description\n')
             for jiraIssue in self.epicOverview.ticketsWithoutEpic:
                 issuesWithoutEpicFile.write('{0}|{1}\n'.format(jiraIssue.issueKey, jiraIssue.description))
@@ -63,8 +63,8 @@ class JiraExportTimeByEpic(jira_exporter.JiraExporter):
     def _secondsToWorkDays(self, seconds):
         return round(seconds / 60 / 60 / 8, 1)
 
-    def _getCsvFilename(self, prefix: str, fromDate: datetime, untilDate: datetime):
-        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
+    def _getCsvFilename(self, prefix: str, fromDate: datetime, toDate: datetime):
+        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+toDate.date().isoformat()+'.csv'
     
 
     

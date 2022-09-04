@@ -55,7 +55,7 @@ class JiraApi:
                 workLogIds.append(worklogItem["worklogId"])
         return workLogIds
 
-    def getWorkLogItems(self, worklogItemIds: List[int], maxNrWorklogItemsInSingleRequest = 100) -> List[JiraWorklogItem]:
+    def getWorkLogItems(self, worklogItemIds: List[int], toDate: datetime, maxNrWorklogItemsInSingleRequest = 100) -> List[JiraWorklogItem]:
         print('Getting worklog items')
         nrOfWorkLogItems = len(worklogItemIds)
         nrOfIterations = int(nrOfWorkLogItems / maxNrWorklogItemsInSingleRequest)
@@ -73,13 +73,14 @@ class JiraApi:
             workLogItemsForRequest = list(islice(worklogItemIds, fromIndex, toIndex))
             jsonResponse = self._getWorklogs(workLogItemsForRequest)
             for worklogItem in jsonResponse:
-                author = worklogItem["author"]["displayName"]
-                issueId = worklogItem["issueId"]
                 date = parse(worklogItem["started"])
-                timeSpentSeconds = worklogItem["timeSpentSeconds"]
+                if (toDate != None and date <= toDate):
+                    author = worklogItem["author"]["displayName"]
+                    issueId = worklogItem["issueId"]
+                    timeSpentSeconds = worklogItem["timeSpentSeconds"]
 
-                worklogItem = JiraWorklogItem(issueId, author, date, timeSpentSeconds)
-                workLogItems.append(worklogItem)
+                    worklogItem = JiraWorklogItem(issueId, author, date, timeSpentSeconds)
+                    workLogItems.append(worklogItem)
 
         return workLogItems
 

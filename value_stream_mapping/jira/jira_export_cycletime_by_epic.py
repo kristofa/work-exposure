@@ -32,9 +32,10 @@ class JiraWorkLogItem:
 
 class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, startDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi
-        self.startDate = startDate
+        self.fromDate = fromDate
+        self.toDate = toDate
         self.epics: Dict[str, JiraEpic] = {}
 
     def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
@@ -49,12 +50,11 @@ class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
             epic.totalSecondsLogged += worklogItem.timeSpentSeconds
 
     def exportToFiles(self):
-        today = datetime.today()
         listOfEpics : List[cycle_time_overview.ItemCycletimeOverview] = self._getItemCycletimeOverview()
-        gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Work In Progress overview",fromDate=self.startDate, toDate=today)
+        gantDiagramExporter = gantt_diagram_exporter.GanttDiagramExporter(title="Work In Progress overview",fromDate=self.fromDate, toDate=self.toDate)
         gantDiagramExporter.export(items = listOfEpics)
 
-        with open(self._getCsvFilename('epic_flow_efficiency', self.startDate, today), 'w') as epicFlowEfficiencyFile:
+        with open(self._getCsvFilename('epic_flow_efficiency', self.fromDate, self.toDate), 'w') as epicFlowEfficiencyFile:
             epicFlowEfficiencyFile.write('epicKey|epicName|flow_efficiency\n')
             for item in listOfEpics:
                 epicFlowEfficiencyFile.write('{0}|{1}|{2}\n'.format(item.itemKey, item.itemDescription, str(item.flowEfficiency())))
@@ -84,8 +84,8 @@ class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
 
         return itemsCycleTimeOverview
 
-    def _getCsvFilename(self, prefix: str, fromDate: datetime, untilDate: datetime):
-        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+untilDate.date().isoformat()+'.csv'
+    def _getCsvFilename(self, prefix: str, fromDate: datetime, toDate: datetime):
+        return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+toDate.date().isoformat()+'.csv'
     
 
     

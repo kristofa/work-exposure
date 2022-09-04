@@ -1,4 +1,5 @@
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from typing import Dict
 from typing import List
 from value_stream_mapping import plantuml
@@ -11,16 +12,18 @@ from value_stream_mapping.domain import epic_overview
 from value_stream_mapping.domain import worktype_overview
 from value_stream_mapping.plantuml import gantt_diagram_exporter
 
-since = datetime.fromisoformat('2022-01-01')
+# between which dates do we want to export data.
+fromDate = datetime(2021, 10, 1, tzinfo=ZoneInfo("Europe/Brussels"))
+toDate = datetime(2022,4,15, tzinfo=ZoneInfo("Europe/Brussels"))
 
 jiraApi = jira_api.JiraApi(baseUrl='https://company.atlassian.net/',user='user@company.com',password='userToken')
-workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(since)
-jiraWorkLogItems = jiraApi.getWorkLogItems(workLogItemIds)
+workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(fromDate)
+jiraWorkLogItems = jiraApi.getWorkLogItems(worklogItemIds = workLogItemIds, toDate = toDate)
 jiraIssues:Dict[str,jira_api.JiraIssue] = {}
 
-exportByEpic = jira_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, startDate=since)
-exportByWorktype = jira_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, startDate=since)
-exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, startDate=since)
+exportByEpic = jira_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
+exportByWorktype = jira_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
+exportCycletimeByEpic = jira_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
 
 exporters:List[jira_exporter.JiraExporter] = [exportByEpic, exportByWorktype, exportCycletimeByEpic]
 
