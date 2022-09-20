@@ -109,6 +109,8 @@ We create a [PlantUML Gantt chart file](https://plantuml.com/gantt-diagram) (ext
 When time was logged for a particular day, the day will be coloured on the Gantt chart. The days for which no time was logged remain blank.
 In this way it becomes visually clear if we continuously worked on a specific epic and probably have a high flow efficiency or if there were a lot of breaks and gaps.
 
+![epic_work_in_progress_overview_from_2022-01-01_until_2022-04-15](https://user-images.githubusercontent.com/2221492/191255729-59564eac-950d-47a5-b89a-a7223739ee6f.png)
+
 #### Flow efficiency be epic
 
 For each of the epics we calculate the flow efficiency.
@@ -126,7 +128,6 @@ The CSV export format looks like this:
 ```
 epicKey|epicName|flow_efficiency
 ```
-
 
 
 ## Python - set up
