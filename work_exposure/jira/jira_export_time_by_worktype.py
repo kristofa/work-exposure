@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import List
 from typing import Dict
-from value_stream_mapping.domain import worktype_overview
+from work_exposure.domain import worktype_overview
 from . import jira_api
 from .import jira_exporter
 

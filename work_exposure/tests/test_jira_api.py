@@ -1,6 +1,6 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from value_stream_mapping.jira import jira_api
+from work_exposure.jira import jira_api
 import unittest
 import responses
 import json

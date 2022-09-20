@@ -2,15 +2,15 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from typing import Dict
 from typing import List
-from value_stream_mapping import plantuml
-from value_stream_mapping.jira import jira_api
-from value_stream_mapping.jira import jira_export_time_by_epic
-from value_stream_mapping.jira import jira_export_time_by_worktype
-from value_stream_mapping.jira import jira_export_cycletime_by_epic
-from value_stream_mapping.jira import jira_exporter
-from value_stream_mapping.domain import epic_overview
-from value_stream_mapping.domain import worktype_overview
-from value_stream_mapping.plantuml import gantt_diagram_exporter
+from work-exposure import plantuml
+from work-exposure.jira import jira_api
+from work-exposure.jira import jira_export_time_by_epic
+from work-exposure.jira import jira_export_time_by_worktype
+from work-exposure.jira import jira_export_cycletime_by_epic
+from work-exposure.jira import jira_exporter
+from work-exposure.domain import epic_overview
+from work-exposure.domain import worktype_overview
+from work-exposure.plantuml import gantt_diagram_exporter
 
 # between which dates do we want to export data.
 fromDate = datetime(2021, 10, 1, tzinfo=ZoneInfo("Europe/Brussels"))
