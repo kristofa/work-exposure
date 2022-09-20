@@ -4,7 +4,9 @@ from value_stream_mapping.domain import cycle_time_overview
 
 class GanttDiagramExporter:
 
-    colors = ['AntiqueWhite', 'Aqua', 'BlueViolet', 'Coral', 'CornflowerBlue', 'Crimson', 'DarkKhaki', 'DarkGreen', 'Yellow', 'SpringGreen', 'Silver', 'SaddleBrown', 'RosyBrown', 'Salmon', 'RebeccaPurple', 'Plum', 'Pink']
+    colors = ['AntiqueWhite', 'Aqua', 'BlueViolet', 'Coral', 'CornflowerBlue', 'Crimson', 'DarkKhaki', 'DarkGreen', 'Yellow', 
+    'SpringGreen', 'Silver', 'SaddleBrown', 'RosyBrown', 'Salmon', 'RebeccaPurple', 'Plum', 'Pink', 'Tomato', 'Gold', 'Peru', 'FireBrick',
+    'Chocolate', 'Moccasin', 'LightSkyBlue', 'Bisque', 'OldLace', 'PeachPuff', 'TECHNOLOGY', 'Tan', 'Thistle']
 
     def __init__(self, title:str, fromDate: datetime, toDate: datetime):
         self.title = title
