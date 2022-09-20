@@ -1,6 +1,6 @@
 # work exposure
 
-Exposes a team's work by exporting data out of JIRA.
+Exposes a team's work by exporting data from [JIRA](https://www.atlassian.com/software/jira).
 
 ## Exporters
 
