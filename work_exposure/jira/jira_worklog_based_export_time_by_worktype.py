@@ -3,10 +3,10 @@ from typing import List
 from typing import Dict
 from work_exposure.domain import worktype_overview
 from . import jira_api
-from .import jira_exporter
+from . import jira_worklog_based_exporter
 
 
-class JiraExportTimeByWorkType(jira_exporter.JiraExporter):
+class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
 
     def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi

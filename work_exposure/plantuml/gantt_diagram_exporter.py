@@ -1,6 +1,6 @@
 from typing import List
 from datetime import datetime
-from value_stream_mapping.domain import cycle_time_overview
+from work_exposure.domain import cycle_time_overview
 
 class GanttDiagramExporter:
 

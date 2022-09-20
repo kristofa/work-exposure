@@ -1,14 +1,14 @@
 from dataclasses import dataclass
 from . import jira_api
-from value_stream_mapping.domain import cycle_time_overview
-from .import jira_exporter
+from work_exposure.domain import cycle_time_overview
+from . import jira_worklog_based_exporter
 from datetime import datetime
 from datetime import date
 import functools
 from functools import total_ordering
 from typing import Dict
 from typing import List
-from value_stream_mapping.plantuml import gantt_diagram_exporter
+from work_exposure.plantuml import gantt_diagram_exporter
 
 
 class JiraEpic:
@@ -30,7 +30,7 @@ class JiraWorkLogItem:
         return (self.dateOfWork == obj.dateOfWork)
 
 
-class JiraExportCycleTimeByEpic(jira_exporter.JiraExporter):
+class JiraExportCycleTimeByEpic(jira_worklog_based_exporter.JiraExporter):
 
     def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi

@@ -1,11 +1,11 @@
 from . import jira_api
-from .import jira_exporter
-from value_stream_mapping.domain import epic_overview
+from . import jira_worklog_based_exporter
+from work_exposure.domain import epic_overview
 from datetime import datetime
 from typing import Dict
 
 
-class JiraExportTimeByEpic(jira_exporter.JiraExporter):
+class JiraExportTimeByEpic(jira_worklog_based_exporter.JiraExporter):
 
     def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
         self.jiraApi = jiraApi
