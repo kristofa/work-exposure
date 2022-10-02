@@ -4,7 +4,7 @@ Exposes a team's work by exporting data from [JIRA](https://www.atlassian.com/so
 
 ## Exporters
 
-Currently all the exporters are based on JIRA worklogs. If you don't log work you won't get any useful data out of it.
+**Currently all the exporters are based on JIRA worklogs. If you don't log work using the JIRA worklogs functionality you won't get any useful data out of it.**
 
 As input the exporters takes a 'from' and 'to' date, the range between which data should be exported. 
 
@@ -12,7 +12,7 @@ The exports are CSV files and in one case also a [PlantUML](https://plantuml.com
 
 ### Time by epic
 
-This exporter exports 4 files all related to the time spent per epic.
+This exporter exports 4 files all related to the time spent on epics.
 
 #### epic overview summary
 
@@ -22,7 +22,7 @@ Exports a CSV file with a single record with structure:
 from|to|total_workdays_logged_on_epics|total_workdays_logged
 ```
 
-It exports the total amount of logged workdays (1 workday = 8 hours) on epics and the total amount of workdays logged in total also on JIRA issues not linked to an epic.
+It exports the total amount of logged workdays (1 workday = 8 hours) on epics and the total amount of workdays logged on JIRA issues not linked to any epic.
 
 #### epic overview
 
@@ -42,7 +42,7 @@ epicKey|epicName|person|total_workdays_logged
 
 #### issues without epic assigned
 
-Exports the Jira issues on which time is logged but which have no epic assigned. Purpose of this is to spot if there are issues which should have been assigned an epic but it is not.
+Exports the Jira issues on which time is logged but which have no epic assigned. Purpose of this is to spot if there are issues which should have been assigned to an epic but they are not.
 
 Structure of CSV:
 
@@ -52,13 +52,16 @@ issueKey|description
 
 ### Time by work type
 
-This exporter supports exporting time spent per type of work. The different types of work can be defined by you by adding labels to the JIRA issues that look like this: `worktype:<name>`.
+This exporter supports exporting time spent per type of work. The different types of work can be defined by adding labels to the JIRA issues that look like this: `worktype:<name>`.
+
 We for example have defined following work types:
 
    * `worktype:software_development`
    * `worktype:operational_support`
    * `worktype:project_management`
    * ...
+
+This can be useful to for example find out how much time was spent on planned vs unplanned work.
 
 #### work type overview summary
 
@@ -69,6 +72,7 @@ from|to|total_workdays_logged_items_with_worktype|total_workdays_logged
 ```
 
 It shows the total workdays logged and the total workdays logged on jira issues which have a worktype label.
+If you expect that every issue has a 'work type' defined this shows you for which percentage of the logged time a work type is missing.
 
 #### work type overview
 
@@ -107,7 +111,7 @@ This exporter calculates the flow efficiency per epic and also exports a PlantUM
 
 We create a [PlantUML Gantt chart file](https://plantuml.com/gantt-diagram) (extension .pu) that visualizes how time was spent on an epic.
 When time was logged for a particular day, the day will be coloured on the Gantt chart. The days for which no time was logged remain blank.
-In this way it becomes visually clear if we continuously worked on a specific epic and probably have a high flow efficiency or if there were a lot of breaks and gaps.
+In this way it becomes visually clear if we continuously worked on a specific epic and probably have a high flow efficiency or if there were a lot of breaks and gaps in the chart.
 
 ![epic_work_in_progress_overview_from_2022-01-01_until_2022-04-15](https://user-images.githubusercontent.com/2221492/191255729-59564eac-950d-47a5-b89a-a7223739ee6f.png)
 
