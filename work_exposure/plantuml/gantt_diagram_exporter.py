@@ -39,8 +39,9 @@ class GanttDiagramExporter:
                         name = nameOfFirstItemForEpic
                     fromDateAsString = inProgress.start.isoformat()
                     toDateAsString = inProgress.end.isoformat()
+                    color = self.colors[epicCounter % len(self.colors)]
                     plantUMLFile.write('[{0}] starts {1} and ends {2}\n'.format(name, fromDateAsString, toDateAsString))
-                    plantUMLFile.write('[{0}] is colored in {1}\n'.format(name, self.colors[epicCounter]))
+                    plantUMLFile.write('[{0}] is colored in {1}\n'.format(name, color))
                     if (inProgressCounter > 0):
                         plantUMLFile.write('[{0}] displays on same row as [{1}]\n'.format(name, nameOfFirstItemForEpic ))
                     plantUMLFile.write('\n')
