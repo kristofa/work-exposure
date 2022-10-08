@@ -1,7 +1,11 @@
 from datetime import datetime
+from queue import Empty
 from zoneinfo import ZoneInfo
 from typing import Dict
 from typing import List
+import configparser
+import getpass
+import sys
 from work_exposure import plantuml
 from work_exposure.jira import jira_api
 from work_exposure.jira import jira_worklog_based_export_time_by_epic
@@ -13,10 +17,25 @@ from work_exposure.domain import worktype_overview
 from work_exposure.plantuml import gantt_diagram_exporter
 
 # between which dates do we want to export data.
-fromDate = datetime(2022, 1, 1, tzinfo=ZoneInfo("Europe/Brussels"))
-toDate = datetime(2022,4,15, tzinfo=ZoneInfo("Europe/Brussels"))
 
-jiraApi = jira_api.JiraApi(baseUrl='https://company.atlassian.net/',user='user@company.com',password='userToken')
+configFileName = 'worklog_based_export.ini'
+config = configparser.ConfigParser()
+
+successfullyReadFileNames = config.read(configFileName)
+if not successfullyReadFileNames:
+    print("Couldn't find config file " + configFileName)
+    print('See README.md for details about the format and content')
+    sys.exit(-1)
+
+fromDate = datetime.fromisoformat(config['DEFAULT']['fromDate'])
+toDate = datetime.fromisoformat(config['DEFAULT']['toDate'])
+
+jiraBaseUrl = config['jira']['jiraBaseUrl']
+jiraUser = config['jira']['jiraUser']
+
+jiraPassword = getpass.getpass("Jira password (api token): ")
+
+jiraApi = jira_api.JiraApi(baseUrl=jiraBaseUrl,user=jiraUser,password=jiraPassword)
 workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(fromDate)
 jiraWorkLogItems = jiraApi.getWorkLogItems(worklogItemIds = workLogItemIds, toDate = toDate)
 jiraIssues:Dict[str,jira_api.JiraIssue] = {}

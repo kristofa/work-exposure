@@ -8,7 +8,7 @@ Exposes a team's work by exporting data from [JIRA](https://www.atlassian.com/so
 
 As input the exporters takes a 'from' and 'to' date, the range between which data should be exported. 
 
-The exports are CSV files and in one case also a [PlantUML](https://plantuml.com) file that can be used to visualize the work.
+The exports are CSV files and also a [PlantUML](https://plantuml.com) file that can be used to visualize the work.
 
 ### Time by epic
 
@@ -156,15 +156,22 @@ Run individual unit test: `python -m work_exposure.tests.test_jira_api`
 
 ## Generating the exports
 
-Before you generate the exports you have to update `worklog_based_export.py` and change:
+Before you generate the exports you have to generate a config file named `worklog_based_export.ini` in the main directory of this repository.
+The file looks like this:
 
-   * fromDate
-   * toDate
-   * JIRA API base URL
-   * JIRA API user
-   * JIRA API password (generated user token)
+```
+[DEFAULT]
+# The dates in between to export metrics.
+fromDate = 2022-04-15 00:00:00.000+02:00
+toDate = 2022-10-07 00:00:00.000+02:00
 
-Next you can run:
+[jira]
+# Jira api details. We don't support storing the password (api token) in the config file. You will be asked to provide it at runtime.
+jiraBaseUrl = https://company.atlassian.net/
+jiraUser = first.lastname@company.com
+```
+
+The password (API token) for the user isn't in the config file and will be asked when you start to script:
 
 ```
 python3 worklog_based_export.py

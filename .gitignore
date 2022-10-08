@@ -130,3 +130,10 @@ dmypy.json
 
 # macOS
 .DS_Store
+
+# Exclude our config files
+worklog_based_export.ini
+
+# Exclude our generated output files
+*.csv
+*.pu
