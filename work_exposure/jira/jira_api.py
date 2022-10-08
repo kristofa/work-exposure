@@ -87,7 +87,7 @@ class JiraApi:
     def getIssue(self, issueId: str) -> JiraIssue:
         requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
         defaultHeaders = {'Content-Type':'application/json'}
-        queryParams = {'fields':'parent,labels,summary'}
+        queryParams = {'fields':'parent,labels,summary,issuetype'}
         timeoutSeconds = 10
 
         response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
@@ -108,6 +108,15 @@ class JiraApi:
             epicKey = parentField["key"]
             epicDescription = parentField["fields"]["summary"]
             jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription)
+        else:
+            # If we have no parent it could be that time is logged to the epic itself
+            if 'issuetype' in fieldsJsonObject:
+                issueTypeField = issuetypefield = jsonResponse["fields"]["issuetype"]
+                issueTypeName = issueTypeField["name"]
+                if (issueTypeName == "Epic"):
+                    epicKey = issueKey
+                    epicDescription = issueDescription
+                    jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription)
 
         return jiraIssue
 
