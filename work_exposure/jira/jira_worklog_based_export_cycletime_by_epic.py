@@ -12,9 +12,10 @@ from work_exposure.plantuml import gantt_diagram_exporter
 
 
 class JiraEpic:
-    def __init__(self, key:str, description: str):
+    def __init__(self, key:str, description: str, colour: str):
         self.key = key
         self.description = description
+        self.colour = colour
         self.jiraWorkLogs: List[JiraWorkLogItem] = []
         self.totalSecondsLogged = 0
 
@@ -41,10 +42,11 @@ class JiraExportCycleTimeByEpic(jira_worklog_based_exporter.JiraExporter):
     def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
         if issue.epic != None:
             epicKey = issue.epic.key
-            epicDescription = issue.epic.description
             epic = self.epics.get(epicKey)
             if epic == None:
-                epic = JiraEpic(epicKey, epicDescription)
+                epicDescription = issue.epic.description
+                epicColour = issue.epic.colour
+                epic = JiraEpic(epicKey, epicDescription, epicColour)
                 self.epics[epicKey] = epic
             epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=worklogItem.date.date()))
             epic.totalSecondsLogged += worklogItem.timeSpentSeconds
@@ -64,7 +66,7 @@ class JiraExportCycleTimeByEpic(jira_worklog_based_exporter.JiraExporter):
     def _getItemCycletimeOverview(self) -> List[cycle_time_overview.ItemCycletimeOverview]:
         itemsCycleTimeOverview: List[cycle_time_overview.ItemCycletimeOverview] = []
         for epic in self.epics.values():
-            itemCycleTimeOverview = cycle_time_overview.ItemCycletimeOverview(itemKey=epic.key, itemDescription=epic.description)
+            itemCycleTimeOverview = cycle_time_overview.ItemCycletimeOverview(itemKey=epic.key, itemDescription=epic.description, itemColour=epic.colour)
             itemCycleTimeOverview.totalTimeLoggedInSeconds = epic.totalSecondsLogged
             sortedJiraWorklogs = sorted(epic.jiraWorkLogs)
             startDate = sortedJiraWorklogs[0].dateOfWork
@@ -77,7 +79,7 @@ class JiraExportCycleTimeByEpic(jira_worklog_based_exporter.JiraExporter):
                     itemCycleTimeOverview.inProgress.append(itemInProgress)
                     startDate = jiraWorklog.dateOfWork
                     previousDate = jiraWorklog.dateOfWork
-            
+
             itemInProgress = cycle_time_overview.ItemInProgress(start=startDate, end=previousDate)
             itemCycleTimeOverview.inProgress.append(itemInProgress)
             itemsCycleTimeOverview.append(itemCycleTimeOverview)

@@ -19,9 +19,10 @@ class JiraIssue:
         self.labels.append(labelValue)
 
 class JiraEpic:
-    def __init__(self, key, description):
+    def __init__(self, key, description, colour):
         self.key = key
         self.description = description
+        self.colour = colour
 
 
 class JiraWorklogItem:
@@ -33,6 +34,39 @@ class JiraWorklogItem:
 
 
 class JiraApi:
+
+
+    # These colours are retrieved using the API by assigning an epic the different colours
+    # available in JIRA, next use Digital Colour Meter on macos to get the RGB values
+    # because the JIRA api doesn't define those :-(
+    # These colours might be different depending on the JIRA version that's used...
+    # So it is probably better to make these configurable later.
+    jiraEpicColourToHexColour = {
+        'purple': '#8478D3',
+        'blue': '#4382F7',
+        'green': '#7CD6A7',
+        'teal': '#5AC4E2',
+        'yellow': '#F6C644',
+        'orange': '#EE7C5C',
+        'grey': '#6E778A',
+        'dark_purple': '#5044A4',
+        'dark_blue': '#2151C5',
+        'dark_green': '#3A855D',
+        'dark_teal': '#48A0BC',
+        'dark_yellow': '#F19E41',
+        'dark_orange': '#CC4525',
+        'dark_grey': '#293756'
+    }
+
+    # dictionary will be built up as we process different epics
+    jiraEpicColours = {}
+
+    # name of the custom field that contains the jira epic colour
+    jiraCustomFieldRepresentingEpicColor = 'customfield_11016'
+
+    # fallback colour in case we can't get colour from api or in case we don't have mapping from
+    # jira value to hex value. Fall back to a bright yellow colour.
+    jiraEpicFallbackColour = '#fcf803'
 
     def __init__(self, baseUrl, user, password, maxResultsPerRequest=25):
         self.baseUrl = baseUrl
@@ -107,7 +141,8 @@ class JiraApi:
             parentField = jsonResponse["fields"]["parent"]
             epicKey = parentField["key"]
             epicDescription = parentField["fields"]["summary"]
-            jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription)
+            epicColour = self._getEpicColour(epicKey)
+            jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription, colour=epicColour)
         else:
             # If we have no parent it could be that time is logged to the epic itself
             if 'issuetype' in fieldsJsonObject:
@@ -116,10 +151,10 @@ class JiraApi:
                 if (issueTypeName == "Epic"):
                     epicKey = issueKey
                     epicDescription = issueDescription
-                    jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription)
+                    epicColour = self._getEpicColour(epicKey)
+                    jiraIssue.epic = JiraEpic(key=epicKey, description=epicDescription, colour=epicColour)
 
         return jiraIssue
-
 
 
     def _getUpdatedWorklogsSince(self, sinceUnixTimeStampMs: float):
@@ -141,6 +176,27 @@ class JiraApi:
         response = requests.post(requestUrl, headers=defaultHeaders, auth=(self.user, self.password), data=json.dumps(requestBody), timeout=timeoutSeconds)
         response.raise_for_status
         return response.json()
-        
 
+    def _getEpicColour(self, epicKey: str):
+        if epicKey in self.jiraEpicColours:
+            return self.jiraEpicColours[epicKey]
+        else:
+            requestUrl = self.baseUrl + 'rest/api/3/issue/' + epicKey
+            defaultHeaders = {'Content-Type':'application/json'}
+            queryParams = {'fields': self.jiraCustomFieldRepresentingEpicColor}
+            timeoutSeconds = 10
 
+            response = requests.get(requestUrl, headers=defaultHeaders, params=queryParams, auth=(self.user, self.password), timeout=timeoutSeconds)
+            response.raise_for_status
+            jsonResponse = response.json()
+            if 'fields' in jsonResponse:
+                fieldsJsonObject = jsonResponse["fields"]
+                if self.jiraCustomFieldRepresentingEpicColor in fieldsJsonObject: 
+                    jiraEpicColour = jsonResponse["fields"][self.jiraCustomFieldRepresentingEpicColor]
+                    hexColour = self.jiraEpicColourToHexColour.get(jiraEpicColour, self.jiraEpicFallbackColour) 
+                    self.jiraEpicColours[epicKey] =  hexColour
+                    return hexColour
+
+            print("Can't find customfield that represents epic colour: " + self.jiraCustomFieldRepresentingEpicColor)
+            self.jiraEpicColours[epicKey] = self.jiraEpicFallbackColour
+            return self.jiraEpicFallbackColour

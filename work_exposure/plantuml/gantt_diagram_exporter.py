@@ -4,10 +4,6 @@ from work_exposure.domain import cycle_time_overview
 
 class GanttDiagramExporter:
 
-    colors = ['AntiqueWhite', 'Aqua', 'BlueViolet', 'Coral', 'CornflowerBlue', 'Crimson', 'DarkKhaki', 'DarkGreen', 'Yellow', 
-    'SpringGreen', 'Silver', 'SaddleBrown', 'RosyBrown', 'Salmon', 'RebeccaPurple', 'Plum', 'Pink', 'Tomato', 'Gold', 'Peru', 'FireBrick',
-    'Chocolate', 'Moccasin', 'LightSkyBlue', 'Bisque', 'OldLace', 'PeachPuff', 'TECHNOLOGY', 'Tan', 'Thistle']
-
     def __init__(self, title:str, fromDate: datetime, toDate: datetime):
         self.title = title
         self.fromDate = fromDate
@@ -39,9 +35,8 @@ class GanttDiagramExporter:
                         name = nameOfFirstItemForEpic
                     fromDateAsString = inProgress.start.isoformat()
                     toDateAsString = inProgress.end.isoformat()
-                    color = self.colors[epicCounter % len(self.colors)]
                     plantUMLFile.write('[{0}] starts {1} and ends {2}\n'.format(name, fromDateAsString, toDateAsString))
-                    plantUMLFile.write('[{0}] is colored in {1}\n'.format(name, color))
+                    plantUMLFile.write('[{0}] is colored in {1}\n'.format(name, item.itemColour))
                     if (inProgressCounter > 0):
                         plantUMLFile.write('[{0}] displays on same row as [{1}]\n'.format(name, nameOfFirstItemForEpic ))
                     plantUMLFile.write('\n')

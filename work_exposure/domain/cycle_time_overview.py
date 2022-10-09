@@ -18,9 +18,10 @@ class ItemInProgress:
 
 class ItemCycletimeOverview:
 
-    def __init__(self, itemKey: str, itemDescription: str):
+    def __init__(self, itemKey: str, itemDescription: str, itemColour: str):
         self.itemKey = itemKey
         self.itemDescription = itemDescription
+        self.itemColour = itemColour
         self.inProgress: List[ItemInProgress] = []
         self.totalTimeLoggedInSeconds = 0
 
