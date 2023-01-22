@@ -2,6 +2,8 @@
 
 Exposes a team's work by exporting data from [JIRA](https://www.atlassian.com/software/jira).
 
+*I realize that I didn't use the Python naming conventions when it comes variable and function names... sorry about that...*
+
 ## Exporters
 
 **Currently all the exporters are based on JIRA worklogs. If you don't log work using the JIRA worklogs functionality you won't get any useful data out of it.**
