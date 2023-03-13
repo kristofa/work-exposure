@@ -25,10 +25,10 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
                 if workType == None:
                     workType = worktype_overview.TimeByWorkType(workType=workTypeFromIssueAsString)
                     self.timeByWorkType[workTypeFromIssueAsString] = workType
-            workType.totalSecondsSpent += worklogItem.timeSpentSeconds
-            secondsSpentByAuthor = workType.totalSecondsByPerson.get(worklogItem.author, 0)
-            workType.totalSecondsByPerson[worklogItem.author] = secondsSpentByAuthor + worklogItem.timeSpentSeconds
-            self.worktypeOverview.totalSecondsSpentOnItemsWithWorkType += worklogItem.timeSpentSeconds
+                workType.totalSecondsSpent += worklogItem.timeSpentSeconds
+                secondsSpentByAuthor = workType.totalSecondsByPerson.get(worklogItem.author, 0)
+                workType.totalSecondsByPerson[worklogItem.author] = secondsSpentByAuthor + worklogItem.timeSpentSeconds
+                self.worktypeOverview.totalSecondsSpentOnItemsWithWorkType += worklogItem.timeSpentSeconds
         else:
             existingIssue = self.ticketsWithoutWorkType.get(issue.issueKey)
             if (existingIssue == None):
