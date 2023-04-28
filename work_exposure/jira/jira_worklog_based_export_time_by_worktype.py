@@ -8,13 +8,14 @@ from . import jira_worklog_based_exporter
 
 class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime, work_classification_prefix: str):
         self.jiraApi = jiraApi
         self.fromDate = fromDate
         self.toDate = toDate
         self.timeByWorkType:Dict[str,worktype_overview.TimeByWorkType] = {}
         self.worktypeOverview = worktype_overview.WorkTypeOverview(fromDate)
         self.ticketsWithoutWorkType:Dict[str, worktype_overview.Issue] = {}
+        self.work_classification_prefix = work_classification_prefix
 
 
     def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
@@ -64,7 +65,7 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
     def _getWorkTypes(self, aJiraIssue: jira_api.JiraIssue) -> List[str]:
         workTypes = []
         for label in aJiraIssue.labels:
-            if (label.startswith('worktype:')):
+            if (label.startswith(self.work_classification_prefix)):
                 workTypes.append(label[9:])
         return workTypes
 

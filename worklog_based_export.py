@@ -32,6 +32,7 @@ toDate = datetime.fromisoformat(config['DEFAULT']['toDate'])
 
 jiraBaseUrl = config['jira']['jiraBaseUrl']
 jiraUser = config['jira']['jiraUser']
+work_classification_prefix = config['jira']['workClassificationPrefix']
 
 jiraPassword = getpass.getpass("Jira password (api token): ")
 
@@ -41,7 +42,7 @@ jiraWorkLogItems = jiraApi.getWorkLogItems(worklogItemIds = workLogItemIds, toDa
 jiraIssues:Dict[str,jira_api.JiraIssue] = {}
 
 exportByEpic = jira_worklog_based_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
-exportByWorktype = jira_worklog_based_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
+exportByWorktype = jira_worklog_based_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate, work_classification_prefix=work_classification_prefix)
 exportCycletimeByEpic = jira_worklog_based_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
 
 exporters:List[jira_worklog_based_exporter.JiraExporter] = [exportByEpic, exportByWorktype, exportCycletimeByEpic]
