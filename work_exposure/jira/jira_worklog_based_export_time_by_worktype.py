@@ -66,7 +66,7 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
         workTypes = []
         for label in aJiraIssue.labels:
             if (label.startswith(self.work_classification_prefix)):
-                workTypes.append(label[9:])
+                workTypes.append(label[len(self.work_classification_prefix):])
         return workTypes
 
     def _secondsToWorkDays(self, seconds):
