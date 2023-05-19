@@ -6,8 +6,8 @@ It can give insights in the following:
 
    * How much time was spent per epic for a specific time period. It exports the total time but also the time spent by person.
    * How much time was spent per type of work. The type of work is added to JIRA issues using labels. It exports the total time but also the time spent by person.
-   * How much work is done in parallel by exporting a PlantUML Gantt chart for a specific time period.
-   * Flow efficiency for the different epics. The ration between the active time and total time spent on an epic.
+   * Visualise on how many epics is worked on in parallel. Visualisation is done by exporting a PlantUML Gantt chart.
+   * Flow efficiency for the different epics. The ratio between the active time and total time spent on an epic.
 
 **Currently all the exporters are based on JIRA worklogs. If you don't log work using the JIRA worklogs functionality you won't get any useful data out of it.**
 
