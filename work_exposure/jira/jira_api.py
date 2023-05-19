@@ -156,6 +156,21 @@ class JiraApi:
 
         return jiraIssue
 
+    def addLabel(self, issueId: str, labelValue: str):
+        requestUrl = self.baseUrl + 'rest/api/3/issue/' + issueId
+        defaultHeaders = {'Content-Type':'application/json'}
+        queryParams = {'fields':'parent,labels,summary,issuetype'}
+        timeoutSeconds = 10
+
+        request_body = {
+            "update": {
+                "labels": [ {"add": labelValue}]
+            }
+        }
+
+        response = requests.put(requestUrl, headers=defaultHeaders, json=request_body, auth=(self.user, self.password), timeout=timeoutSeconds)
+        response.raise_for_status
+
 
     def _getUpdatedWorklogsSince(self, sinceUnixTimeStampMs: float):
         requestUrl = self.baseUrl + 'rest/api/3/worklog/updated'

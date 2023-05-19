@@ -2,11 +2,18 @@
 
 Exposes a team's work by exporting data from [JIRA](https://www.atlassian.com/software/jira).
 
+It can give insights in the following:
+
+   * How much time was spent per epic for a specific time period. It exports the total time but also the time spent by person.
+   * How much time was spent per type of work. The type of work is added to JIRA issues using labels. It exports the total time but also the time spent by person.
+   * How much work is done in parallel by exporting a PlantUML Gantt chart for a specific time period.
+   * Flow efficiency for the different epics. The ration between the active time and total time spent on an epic.
+
+**Currently all the exporters are based on JIRA worklogs. If you don't log work using the JIRA worklogs functionality you won't get any useful data out of it.**
+
 *I realize that I didn't use the Python naming conventions when it comes variable and function names... sorry about that...*
 
 ## Exporters
-
-**Currently all the exporters are based on JIRA worklogs. If you don't log work using the JIRA worklogs functionality you won't get any useful data out of it.**
 
 As input the exporters takes a 'from' and 'to' date, the range between which data should be exported. 
 
@@ -117,7 +124,7 @@ In this way it becomes visually clear if we continuously worked on a specific ep
 
 ![epic_work_in_progress_overview_from_2022-01-01_until_2022-04-15](https://user-images.githubusercontent.com/2221492/191255729-59564eac-950d-47a5-b89a-a7223739ee6f.png)
 
-#### Flow efficiency be epic
+#### Flow efficiency by epic
 
 For each of the epics we calculate the flow efficiency.
 
@@ -171,6 +178,9 @@ toDate = 2022-10-07 00:00:00.000+02:00
 # Jira api details. We don't support storing the password (api token) in the config file. You will be asked to provide it at runtime.
 jiraBaseUrl = https://company.atlassian.net/
 jiraUser = first.lastname@company.com
+# The label prefix that will be used to get the work type classification or an issue. For example if the prefix = worktype: and you want a work type classification of 'operational_support'
+# you should add following label to the issues that you want to classify as operational_support: worktype:operational_support
+workClassificationPrefix=worktype:
 ```
 
 The password (API token) for the user isn't in the config file and will be asked when you start to script:
@@ -178,5 +188,40 @@ The password (API token) for the user isn't in the config file and will be asked
 ```
 python3 worklog_based_export.py
 ```
+
+## Adding work classifications to JIRA issues in bulk
+
+When you run the export there will be a file exported with the JIRA issues for which work was logged but which don't have a work classification label.
+The file is named `worktype_overview_issues_without_worktype_from_<fromDate_until_<toDate>.csv` and it has following content:
+
+```
+issueKey|description
+OD-7267|Description of JIRA ticket
+OD-7268|Description of JIRA ticket
+...
+```
+
+If you want to classify all your JIRA issues which had work logs to get a more accurate view on where the time was spent you probably want to add work classification labels to these
+JIRA issues.
+
+You can do this in bulk by using `add_work_classification_labels.py`.  This Python script expects a file that looks like the file described above but with one additional field added to it (label):
+
+```
+issueKey|description|label
+OD-7267|Description of JIRA ticket|worktype:operational_support
+OD-7268|Description of JIRA ticket|worktype:defect_work
+...
+```
+
+For each of the records in the file the script will add the label to the corresponding JIRA issue after which you can rerun `worklog_based_export_py` to get updated data taking into account the new work classifications.
+
+For example if you add the labels to the originally exported file you can add the labels in bulk by executing:
+
+```
+python3 add_work_classification_labels.py worktype_overview_issues_without_worktype_from_<fromDate_until_<toDate>.csv
+```
+
+This script will also use the `worklog_based_export.ini` file to get the JIRA URL and user name and just like with `worklog_based_export.py` you will be asked for the user password / API token.
+
 
 
