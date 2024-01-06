@@ -14,7 +14,7 @@ class GanttDiagramExporter:
 
     def export(self, items: List[cycle_time_overview.ItemCycletimeOverview]):
         with open(self._getPlantUMLFilename('epic_work_in_progress_overview'), 'w') as plantUMLFile:
-            plantUMLFile.write('@startuml\n')
+            plantUMLFile.write('@startgantt\n')
             plantUMLFile.write('Project starts {0}\n'.format(self.fromDate.date().isoformat()))
             plantUMLFile.write('saturday are closed\n')
             plantUMLFile.write('sunday are closed\n')
@@ -43,4 +43,4 @@ class GanttDiagramExporter:
                     inProgressCounter += 1
                 
                 epicCounter += 1
-            plantUMLFile.write('@enduml\n')    
+            plantUMLFile.write('@endgantt\n')
