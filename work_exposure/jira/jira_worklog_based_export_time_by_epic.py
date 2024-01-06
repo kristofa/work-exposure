@@ -3,31 +3,34 @@ from . import jira_worklog_based_exporter
 from work_exposure.domain import epic_overview
 from datetime import datetime
 from typing import Dict
+from typing import List
 
 
 class JiraExportTimeByEpic(jira_worklog_based_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime, epicsToExclude: List[str]):
         self.jiraApi = jiraApi
         self.fromDate = fromDate
         self.toDate = toDate
         self.epics:Dict[str, epic_overview.TimeByEpic] = {}
         self.epicOverview = epic_overview.EpicOverview(fromDate)
         self.ticketsWithoutEpic:Dict[str, epic_overview.Issue] = {}
+        self.epicsToExclude = epicsToExclude
 
 
     def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
         if issue.epic != None:
             epicKey = issue.epic.key
-            epicDescription = issue.epic.description
-            epic = self.epics.get(epicKey)
-            if epic == None:
-                epic = epic_overview.TimeByEpic(epicKey, epicDescription)
-                self.epics[epicKey] = epic
-            epic.totalSecondsSpent += worklogItem.timeSpentSeconds
-            secondsSpentByAuthor = epic.totalSecondsByPerson.get(worklogItem.author, 0)
-            epic.totalSecondsByPerson[worklogItem.author] = secondsSpentByAuthor + worklogItem.timeSpentSeconds
-            self.epicOverview.totalSecondsSpentOnEpics += worklogItem.timeSpentSeconds
+            if epicKey not in self.epicsToExclude:
+                epicDescription = issue.epic.description
+                epic = self.epics.get(epicKey)
+                if epic == None:
+                    epic = epic_overview.TimeByEpic(epicKey, epicDescription)
+                    self.epics[epicKey] = epic
+                epic.totalSecondsSpent += worklogItem.timeSpentSeconds
+                secondsSpentByAuthor = epic.totalSecondsByPerson.get(worklogItem.author, 0)
+                epic.totalSecondsByPerson[worklogItem.author] = secondsSpentByAuthor + worklogItem.timeSpentSeconds
+                self.epicOverview.totalSecondsSpentOnEpics += worklogItem.timeSpentSeconds
         else:
             existingIssue = self.ticketsWithoutEpic.get(issue.issueKey)
             if (existingIssue == None):

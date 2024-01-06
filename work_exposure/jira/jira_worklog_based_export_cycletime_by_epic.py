@@ -33,23 +33,25 @@ class JiraWorkLogItem:
 
 class JiraExportCycleTimeByEpic(jira_worklog_based_exporter.JiraExporter):
 
-    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime):
+    def __init__(self, jiraApi: jira_api.JiraApi, fromDate: datetime, toDate: datetime, epicsToExclude: List[str]):
         self.jiraApi = jiraApi
         self.fromDate = fromDate
         self.toDate = toDate
         self.epics: Dict[str, JiraEpic] = {}
+        self.epicsToExclude = epicsToExclude
 
     def process(self, worklogItem: jira_api.JiraWorklogItem, issue: jira_api.JiraIssue):
         if issue.epic != None:
             epicKey = issue.epic.key
-            epic = self.epics.get(epicKey)
-            if epic == None:
-                epicDescription = issue.epic.description
-                epicColour = issue.epic.colour
-                epic = JiraEpic(epicKey, epicDescription, epicColour)
-                self.epics[epicKey] = epic
-            epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=worklogItem.date.date()))
-            epic.totalSecondsLogged += worklogItem.timeSpentSeconds
+            if epicKey not in self.epicsToExclude:
+                epic = self.epics.get(epicKey)
+                if epic == None:
+                    epicDescription = issue.epic.description
+                    epicColour = issue.epic.colour
+                    epic = JiraEpic(epicKey, epicDescription, epicColour)
+                    self.epics[epicKey] = epic
+                epic.jiraWorkLogs.append(JiraWorkLogItem(dateOfWork=worklogItem.date.date()))
+                epic.totalSecondsLogged += worklogItem.timeSpentSeconds
 
     def exportToFiles(self):
         listOfEpics : List[cycle_time_overview.ItemCycletimeOverview] = self._getItemCycletimeOverview()

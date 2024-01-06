@@ -16,7 +16,6 @@ from work_exposure.domain import epic_overview
 from work_exposure.domain import worktype_overview
 from work_exposure.plantuml import gantt_diagram_exporter
 
-# between which dates do we want to export data.
 
 configFileName = 'worklog_based_export.ini'
 config = configparser.ConfigParser()
@@ -33,6 +32,7 @@ toDate = datetime.fromisoformat(config['DEFAULT']['toDate'])
 jiraBaseUrl = config['jira']['jiraBaseUrl']
 jiraUser = config['jira']['jiraUser']
 work_classification_prefix = config['jira']['workClassificationPrefix']
+epics_to_exclude = config['jira']['epicsToExclude'].split(",")
 
 jiraPassword = getpass.getpass("Jira password (api token): ")
 
@@ -41,9 +41,9 @@ workLogItemIds = jiraApi.getUpdatedWorklogIdsSince(fromDate)
 jiraWorkLogItems = jiraApi.getWorkLogItems(worklogItemIds = workLogItemIds, toDate = toDate)
 jiraIssues:Dict[str,jira_api.JiraIssue] = {}
 
-exportByEpic = jira_worklog_based_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
+exportByEpic = jira_worklog_based_export_time_by_epic.JiraExportTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate, epicsToExclude=epics_to_exclude)
 exportByWorktype = jira_worklog_based_export_time_by_worktype.JiraExportTimeByWorkType(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate, work_classification_prefix=work_classification_prefix)
-exportCycletimeByEpic = jira_worklog_based_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate)
+exportCycletimeByEpic = jira_worklog_based_export_cycletime_by_epic.JiraExportCycleTimeByEpic(jiraApi=jiraApi, fromDate=fromDate, toDate=toDate, epicsToExclude=epics_to_exclude)
 
 exporters:List[jira_worklog_based_exporter.JiraExporter] = [exportByEpic, exportByWorktype, exportCycletimeByEpic]
 

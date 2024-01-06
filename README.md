@@ -181,6 +181,8 @@ jiraUser = first.lastname@company.com
 # The label prefix that will be used to get the work type classification or an issue. For example if the prefix = worktype: and you want a work type classification of 'operational_support'
 # you should add following label to the issues that you want to classify as operational_support: worktype:operational_support
 workClassificationPrefix=worktype:
+# Supports excluding epics. List comma separated list of epic keys.
+epicsToExclude=MM-7865,MM-7866
 ```
 
 The password (API token) for the user isn't in the config file and will be asked when you start to script:
