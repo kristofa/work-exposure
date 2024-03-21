@@ -27,9 +27,14 @@ class JiraExportTimeByEpic(jira_worklog_based_exporter.JiraExporter):
                 if epic == None:
                     epic = epic_overview.TimeByEpic(epicKey, epicDescription)
                     self.epics[epicKey] = epic
+                
                 epic.totalSecondsSpent += worklogItem.timeSpentSeconds
                 secondsSpentByAuthor = epic.totalSecondsByPerson.get(worklogItem.author, 0)
                 epic.totalSecondsByPerson[worklogItem.author] = secondsSpentByAuthor + worklogItem.timeSpentSeconds
+
+                secondsSpentByIssue = epic.totalSecondsByIssue.get(issue.issueKey, 0)
+                epic.totalSecondsByIssue[issue.issueKey] = secondsSpentByIssue + worklogItem.timeSpentSeconds
+
                 self.epicOverview.totalSecondsSpentOnEpics += worklogItem.timeSpentSeconds
         else:
             existingIssue = self.ticketsWithoutEpic.get(issue.issueKey)
@@ -51,12 +56,17 @@ class JiraExportTimeByEpic(jira_worklog_based_exporter.JiraExporter):
     
         with open(self._getCsvFilename('epic_overview', self.fromDate, self.toDate), 'w') as epicOverviewFile:
             with open(self._getCsvFilename('epic_overview_by_person', self.fromDate, self.toDate), 'w') as epicOverviewByPersonFile:
-                epicOverviewFile.write('epicKey|epicName|total_workdays_logged\n')
-                epicOverviewByPersonFile.write('epicKey|epicName|person|total_workdays_logged\n')
-                for epic in self.epicOverview.overviewByEpic:
-                    epicOverviewFile.write('{0}|{1}|{2}\n'.format(epic.epicKey, epic.epicName, str(self._secondsToWorkDays(epic.totalSecondsSpent))))
-                    for key in epic.totalSecondsByPerson.keys():
-                        epicOverviewByPersonFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key, str(self._secondsToWorkDays(epic.totalSecondsByPerson[key]))))
+                with open(self._getCsvFilename('epic_overview_by_issue', self.fromDate, self.toDate), 'w') as epicOverviewByIssueFile:
+                    epicOverviewFile.write('epicKey|epicName|total_workdays_logged\n')
+                    epicOverviewByPersonFile.write('epicKey|epicName|person|total_workdays_logged\n')
+                    epicOverviewByIssueFile.write('epicKey|epicName|issue|total_workdays_logged\n')
+
+                    for epic in self.epicOverview.overviewByEpic:
+                        epicOverviewFile.write('{0}|{1}|{2}\n'.format(epic.epicKey, epic.epicName, str(self._secondsToWorkDays(epic.totalSecondsSpent))))
+                        for key in epic.totalSecondsByPerson.keys():
+                            epicOverviewByPersonFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key, str(self._secondsToWorkDays(epic.totalSecondsByPerson[key]))))
+                        for key in epic.totalSecondsByIssue.keys():
+                            epicOverviewByIssueFile.write('{0}|{1}|{2}|{3}\n'.format(epic.epicKey, epic.epicName, key,  str(self._secondsToWorkDays(epic.totalSecondsByIssue[key]))))
 
         with open(self._getCsvFilename('epic_overview_issues_without_epic', self.fromDate, self.toDate), 'w') as issuesWithoutEpicFile:
             issuesWithoutEpicFile.write('issueKey|description\n')

@@ -19,6 +19,7 @@ class TimeByEpic:
         self.epicName = epicName
         self.totalSecondsSpent = 0
         self.totalSecondsByPerson:Dict[str, int] = {}
+        self.totalSecondsByIssue:Dict[str, int] = {}
 
 class Issue:
 
