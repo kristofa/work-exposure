@@ -67,14 +67,14 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
                 
                     worktypeOverviewFile.write('worktype|total_workdays_logged\n')
                     worktypeOverviewByPersonFile.write('worktype|person|total_workdays_logged\n')
-                    worktypeOverviewByIssueFile.write('worktype|issue|description|total_workdays_logged\n')
+                    worktypeOverviewByIssueFile.write('worktype|issue|description|total_minutes_logged\n')
                     for worktype in self.worktypeOverview.overviewByWorkType:
                         worktypeOverviewFile.write('{0}|{1}\n'.format(worktype.workType, str(self._secondsToWorkDays(worktype.totalSecondsSpent))))
                         for person in worktype.totalSecondsByPerson.keys():
                             worktypeOverviewByPersonFile.write('{0}|{1}|{2}\n'.format(worktype.workType, person, str(self._secondsToWorkDays(worktype.totalSecondsByPerson[person]))))
                         for issueKey in worktype.totalSecondsByIssue.keys():
                             issueDescription = self.allIssuesByKey[issueKey].description
-                            worktypeOverviewByIssueFile.write('{0}|{1}|{2}|{3}\n'.format(worktype.workType, issueKey, issueDescription, str(self._secondsToWorkDays(worktype.totalSecondsByIssue[issueKey]))))
+                            worktypeOverviewByIssueFile.write('{0}|{1}|{2}|{3}\n'.format(worktype.workType, issueKey, issueDescription, str(self._secondsToMinutes(worktype.totalSecondsByIssue[issueKey]))))
 
         with open(self._getCsvFilename('worktype_overview_issues_without_worktype', self.fromDate, self.toDate), 'w') as issuesWithoutWorktypeFile:
             issuesWithoutWorktypeFile.write('issueKey|description\n')
@@ -90,6 +90,9 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
 
     def _secondsToWorkDays(self, seconds):
         return round(seconds / 60 / 60 / 8, 1)
+
+    def _secondsToMinutes(self, seconds):
+        return round(seconds / 60, 0)
 
     def _getCsvFilename(self, prefix: str, fromDate: datetime, toDate: datetime):
         return prefix + '_from_'+fromDate.date().isoformat()+'_until_'+toDate.date().isoformat()+'.csv'
