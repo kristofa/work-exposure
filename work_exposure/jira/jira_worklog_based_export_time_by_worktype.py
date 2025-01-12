@@ -42,6 +42,11 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
                 secondsSpentByIssue = workType.totalSecondsByIssue.get(issue.issueKey, 0)
                 workType.totalSecondsByIssue[issue.issueKey] = secondsSpentByIssue + worklogItem.timeSpentSeconds
 
+                # add time by year and month
+                yearMonth = worklogItem.date.strftime('%Y%m')
+                secondsSpentByYearMonth = workType.totalSecondsByYearAndMonth.get(yearMonth, 0)
+                workType.totalSecondsByYearAndMonth[yearMonth] = secondsSpentByYearMonth + worklogItem.timeSpentSeconds
+
                 self.worktypeOverview.totalSecondsSpentOnItemsWithWorkType += worklogItem.timeSpentSeconds
         else:
             existingIssue = self.ticketsWithoutWorkType.get(issue.issueKey)
@@ -64,17 +69,21 @@ class JiraExportTimeByWorkType(jira_worklog_based_exporter.JiraExporter):
         with open(self._getCsvFilename('worktype_overview', self.fromDate, self.toDate), 'w') as worktypeOverviewFile:
             with open(self._getCsvFilename('worktype_overview_by_person', self.fromDate, self.toDate), 'w') as worktypeOverviewByPersonFile:
                 with open(self._getCsvFilename('worktype_overview_by_issue', self.fromDate, self.toDate), 'w') as worktypeOverviewByIssueFile:
+                    with open(self._getCsvFilename('worktype_overview_by_yearmonth', self.fromDate, self.toDate), 'w') as worktypeOverviewByYearMonthFile:
                 
-                    worktypeOverviewFile.write('worktype|total_workdays_logged\n')
-                    worktypeOverviewByPersonFile.write('worktype|person|total_workdays_logged\n')
-                    worktypeOverviewByIssueFile.write('worktype|issue|description|total_minutes_logged\n')
-                    for worktype in self.worktypeOverview.overviewByWorkType:
-                        worktypeOverviewFile.write('{0}|{1}\n'.format(worktype.workType, str(self._secondsToWorkDays(worktype.totalSecondsSpent))))
-                        for person in worktype.totalSecondsByPerson.keys():
-                            worktypeOverviewByPersonFile.write('{0}|{1}|{2}\n'.format(worktype.workType, person, str(self._secondsToWorkDays(worktype.totalSecondsByPerson[person]))))
-                        for issueKey in worktype.totalSecondsByIssue.keys():
-                            issueDescription = self.allIssuesByKey[issueKey].description
-                            worktypeOverviewByIssueFile.write('{0}|{1}|{2}|{3}\n'.format(worktype.workType, issueKey, issueDescription, str(self._secondsToMinutes(worktype.totalSecondsByIssue[issueKey]))))
+                        worktypeOverviewFile.write('worktype|total_workdays_logged\n')
+                        worktypeOverviewByPersonFile.write('worktype|person|total_workdays_logged\n')
+                        worktypeOverviewByIssueFile.write('worktype|issue|description|total_minutes_logged\n')
+                        worktypeOverviewByYearMonthFile.write('worktype|yearmonth|total_workdays_logged\n')
+                        for worktype in self.worktypeOverview.overviewByWorkType:
+                            worktypeOverviewFile.write('{0}|{1}\n'.format(worktype.workType, str(self._secondsToWorkDays(worktype.totalSecondsSpent))))
+                            for person in worktype.totalSecondsByPerson.keys():
+                                worktypeOverviewByPersonFile.write('{0}|{1}|{2}\n'.format(worktype.workType, person, str(self._secondsToWorkDays(worktype.totalSecondsByPerson[person]))))
+                            for issueKey in worktype.totalSecondsByIssue.keys():
+                                issueDescription = self.allIssuesByKey[issueKey].description
+                                worktypeOverviewByIssueFile.write('{0}|{1}|{2}|{3}\n'.format(worktype.workType, issueKey, issueDescription, str(self._secondsToMinutes(worktype.totalSecondsByIssue[issueKey]))))
+                            for yearMonth in worktype.totalSecondsByYearAndMonth.keys():
+                                worktypeOverviewByYearMonthFile.write('{0}|{1}|{2}\n'.format(worktype.workType, yearMonth, str(self._secondsToWorkDays(worktype.totalSecondsByYearAndMonth[yearMonth]))))
 
         with open(self._getCsvFilename('worktype_overview_issues_without_worktype', self.fromDate, self.toDate), 'w') as issuesWithoutWorktypeFile:
             issuesWithoutWorktypeFile.write('issueKey|description\n')

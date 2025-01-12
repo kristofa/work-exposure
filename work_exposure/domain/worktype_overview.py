@@ -20,6 +20,7 @@ class TimeByWorkType:
         self.totalSecondsSpent = 0
         self.totalSecondsByPerson: Dict[str, int] = {}
         self.totalSecondsByIssue: Dict[str, int] = {}
+        self.totalSecondsByYearAndMonth: Dict[str, int] = {}
 
 class Issue:
 
